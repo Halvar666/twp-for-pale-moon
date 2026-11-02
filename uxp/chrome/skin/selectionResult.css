@@ -1,0 +1,10 @@
+/* MPL-2.0; result window only. Never affects the browser toolbar. */
+#twpuxp-selection-window .twpuxp-selection-layout { padding: 12px; }
+#twpuxp-selection-window .twpuxp-selection-heading { margin-bottom: 9px; }
+#twpuxp-selection-window .twpuxp-selection-heading .header {
+  font-size: 1.15em; font-weight: bold;
+}
+#twpuxp-selection-window textbox[multiline="true"] { min-height: 85px; margin-bottom: 10px; }
+#twpuxp-selection-window .twpuxp-selection-actions { margin-top: 4px; }
+#twpuxp-selection-window .twpuxp-languages { margin: 2px 0 12px 0; }
+#twpuxp-selection-window .twpuxp-languages menulist { min-width: 125px; }

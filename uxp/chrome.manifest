@@ -1,0 +1,5 @@
+content twpuxp chrome/content/
+skin twpuxp classic/1.0 chrome/skin/
+overlay chrome://browser/content/browser.xul chrome://twpuxp/content/browserOverlay.xul
+style chrome://browser/content/browser.xul chrome://twpuxp/skin/toolbarButton.css
+style chrome://global/content/customizeToolbar.xul chrome://twpuxp/skin/toolbarButton.css

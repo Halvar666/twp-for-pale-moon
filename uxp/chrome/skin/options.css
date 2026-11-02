@@ -1,0 +1,21 @@
+/* MPL-2.0. Scoped exclusively to the TWP settings window. */
+#twpuxp-options-window .twpuxp-options-body { padding: 13px; }
+#twpuxp-options-window .header { font-size: 1.2em; font-weight: bold; }
+#twpuxp-options-window groupbox { margin-top: 10px; }
+#twpuxp-options-window menulist { min-width: 190px; }
+#twpuxp-options-window .helptext { color: GrayText; margin-top: 6px; }
+#twpuxp-options-window .error { color: #bb2323; min-height: 18px; }
+
+/* 0.0.1a10: Keep the action buttons outside the scrolling options area.
+   XUL calculates groupbox minimum sizes using native theme metrics, which
+   can exceed a fixed-height window on some Windows/UXP themes. */
+#twpuxp-options-window .twpuxp-options-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#twpuxp-options-window .twpuxp-options-fields { padding-bottom: 4px; }
+#twpuxp-options-window .twpuxp-options-footer { padding-top: 7px; }
+
+/* a23: shortcut input readability while keeping the layout theme-neutral. */
+#twpuxp-options-window textbox[id^="twpuxp-shortcut-input-"] { min-width: 145px; }
+#twpuxp-options-window #twpuxp-shortcut-error { min-height: 10px; }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://twpuxp/skin/selectionResult.css" type="text/css"?>
+<window id="twpuxp-selection-window"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="TWP – Translate selected text"
+        width="680" height="540" orient="vertical"
+        persist="width height"
+        onload="TWPSelectionResult.init();"
+        onunload="TWPSelectionResult.close();">
+  <script type="application/javascript" src="chrome://twpuxp/content/languageCatalog.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/languageMenus.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/selectionResult.js"/>
+  <vbox flex="1" class="twpuxp-selection-layout">
+    <hbox align="center" class="twpuxp-selection-heading">
+      <image src="chrome://twpuxp/skin/icon-32.png" width="32" height="32"/>
+      <vbox flex="1">
+        <label value="TWP – Translate selected text" class="header"/>
+        <label id="twpuxp-selection-direction" value=""/>
+      </vbox>
+    </hbox>
+    <hbox align="center" class="twpuxp-languages">
+      <label value="From" control="twpuxp-selection-from"/>
+      <menulist id="twpuxp-selection-from" flex="1"><menupopup/></menulist>
+      <button id="twpuxp-selection-swap" label="Swap" tooltiptext="Swap translation languages"
+              oncommand="TWPSelectionResult.swap();"/>
+      <label value="To" control="twpuxp-selection-to"/>
+      <menulist id="twpuxp-selection-to" flex="1"><menupopup/></menulist>
+      <button id="twpuxp-selection-run" label="Translate" oncommand="TWPSelectionResult.run();"/>
+    </hbox>
+    <hbox align="center" class="twpuxp-languages">
+      <label value="Service" control="twpuxp-selection-service"/>
+      <menulist id="twpuxp-selection-service" flex="1" oncommand="TWPSelectionResult.serviceChanged();">
+        <menupopup>
+          <menuitem value="google" label="Google Translate"/>
+          <menuitem value="bing" label="Bing Translator"/>
+          <menuitem value="deepl" label="DeepL (experimental, unofficial)"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+    <label value="Original text" control="twpuxp-selection-original"/>
+    <textbox id="twpuxp-selection-original" multiline="true" readonly="true" rows="6" flex="1"/>
+    <label value="Translation" control="twpuxp-selection-translation"/>
+    <textbox id="twpuxp-selection-translation" multiline="true" readonly="true" rows="6" flex="1"/>
+    <hbox align="center" class="twpuxp-selection-actions">
+      <description id="twpuxp-selection-status" flex="1">Translating…</description>
+      <button id="twpuxp-selection-copy" label="Copy translation" disabled="true"
+              oncommand="TWPSelectionResult.copy();"/>
+      <button label="Close" oncommand="window.close();"/>
+    </hbox>
+  </vbox>
+</window>

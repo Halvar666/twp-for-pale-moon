@@ -1,0 +1,26 @@
+/* MPL-2.0 – a27 regressions: XUL customize icon and accurate privacy wording. */
+const assert=require('node:assert/strict');
+const fs=require('fs');const path=require('path');
+const root=path.join(__dirname,'..');
+const read=f=>fs.readFileSync(path.join(root,f),'utf8');
+const man=read('chrome.manifest');
+assert.match(man,/style\s+chrome:\/\/global\/content\/customizeToolbar\.xul\s+chrome:\/\/twpuxp\/skin\/toolbarButton\.css/);
+assert.match(man,/style\s+chrome:\/\/browser\/content\/browser\.xul\s+chrome:\/\/twpuxp\/skin\/toolbarButton\.css/);
+const css=read('chrome/skin/toolbarButton.css');
+assert.match(css,/#twpuxp-page-button\s*,\s*#wrapper-twpuxp-page-button/);
+assert.match(css,/list-style-image:\s*url\("chrome:\/\/twpuxp\/skin\/icon-24\.png"\)\s*!important/);
+assert.match(css,/#twpuxp-page-button\s*>\s*\.toolbarbutton-icon\s*\{[^}]*list-style-image:\s*inherit\s*!important/s);
+assert.match(css,/toolbar\[iconsize="small"\]\s+#twpuxp-page-button[\s\S]*icon-16\.png/);
+assert.doesNotMatch(css,/^\s*(?:\.toolbarbutton-icon|toolbarbutton|toolbar)\s*\{/m,'Must not affect unrelated toolbar icons');
+assert.doesNotMatch(css,/(?:width|height)\s*:/,'Do not hardcode icon geometry');
+const xul=read('chrome/content/browserOverlay.xul');
+assert.match(xul,/<toolbarpalette id="BrowserToolbarPalette">[\s\S]*<toolbarbutton id="twpuxp-page-button"/);
+const opt=read('chrome/content/options.xul');
+assert.match(opt,/Privacy-enhanced translation requests \(recommended\)/);
+assert.doesNotMatch(opt,/Anonymous translation requests/);
+assert.match(opt,/This is privacy protection, not anonymity/);
+const err=read('chrome/content/privacyXHR.js');
+assert.match(err,/Disable 'Privacy-enhanced translation requests' in Preferences/);
+assert.doesNotMatch(err,/Disable 'Anonymous translation requests'/);
+assert.match(read('defaults/preferences/defaults.js'),/privacyEnhancedRequests", true/);
+console.log('PASS a27: customize window CSS registered, TWP-only image handling, small icon, privacy label');

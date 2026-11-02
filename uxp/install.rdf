@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>twp-uxp-prototype@unofficial.local</em:id>
+    <em:type>2</em:type>
+    <em:name>TWP for Pale Moon</em:name>
+    <em:version>1.0.0b1</em:version>
+    <em:description>Unofficial native UXP port of TWP for Pale Moon. Google and Bing translation, optional DeepL, automatic rules and privacy-enhanced requests.</em:description>
+    <em:optionsURL>chrome://twpuxp/content/options.xul</em:optionsURL>
+    <em:iconURL>chrome://twpuxp/skin/icon-48.png</em:iconURL>
+    <em:icon64URL>chrome://twpuxp/skin/icon-64.png</em:icon64URL>
+    <em:creator>UXP port contributors; upstream FilipePS (TWP)</em:creator>
+    <em:targetApplication>
+      <Description>
+        <em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>
+        <em:minVersion>33.0</em:minVersion>
+        <em:maxVersion>35.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>

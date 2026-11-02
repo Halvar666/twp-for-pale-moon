@@ -1,0 +1,27 @@
+/* MPL-2.0. Theme-independent TWP toolbar icon styling for browser and Customize Toolbar.
+   The latter is a *separate* chrome://global/content/customizeToolbar.xul window.
+   Loading this stylesheet only for browser.xul lets themes show their whole
+   toolbar sprite in the Customize palette. See chrome.manifest style registration.
+   All selectors are scoped to this addon; never override other theme buttons. */
+#twpuxp-page-button,
+#wrapper-twpuxp-page-button {
+  list-style-image: url("chrome://twpuxp/skin/icon-24.png") !important;
+  -moz-image-region: auto !important;
+}
+/* The theme may put its sprite directly on the anonymous icon child rather
+   than the toolbarbutton. Inherit only this button's already-correct icon. */
+#twpuxp-page-button > .toolbarbutton-icon {
+  list-style-image: inherit !important;
+  -moz-image-region: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+/* Small toolbar buttons retain the previous, tested 16px asset. */
+toolbar[iconsize="small"] #twpuxp-page-button,
+#twpuxp-page-button[iconsize="small"],
+toolbar[iconsize="small"] #wrapper-twpuxp-page-button {
+  list-style-image: url("chrome://twpuxp/skin/icon-16.png") !important;
+  -moz-image-region: auto !important;
+}
+/* Do not set fixed width/height of the anonymous icon; let the active theme
+   control the toolbar layout and spacing. */
