@@ -1,5 +1,67 @@
 # TWP for Pale Moon — UXP port changelog
 
+## 1.0.0b2 — Second public beta candidate
+
+[Fixed] Preserve line breaks, blank lines and indentation when translating selected text and eligible multiline preformatted natural-language content, including GitHub README update histories. Restore Google's provider-fragment contract for the new multiline path.
+
+[Improved] When manually translating with Auto source, allow service-side detection where strongly Japanese/Korean/Chinese text conflicts with the document language. Existing explicit language choices and automatic-translation rules remain unchanged.
+
+[Changed] Reduce experimental DeepL dispatch spacing from 1250 ms to 750 ms. Requests remain serialized and DeepL can still respond with HTTP 429.
+
+[Added] A page context submenu to translate, set/remove automatic translation for the current site, and restore the original. Existing selected-text context menu remains available.
+
+[Compatibility] Keep the guarded Australis/CustomizableUI toolbar placement logic and Basilisk 52.9.x target in `install.rdf`; Basilisk toolbar placement has been manually confirmed stable. This is basic Basilisk compatibility, not full feature support; Pale Moon remains the primary browser. Firefox is not supported.
+
+[Cleanup] Finalize b2 version, regression metadata, and beta documentation with no translation-engine logic changes after b2a5.
+
+[Tests] 45/45 regression suites passing; packaging, application IDs, version metadata and XPI contents additionally verified. The b2 package still requires final browser installation verification before public release.
+
+## 1.0.0b2a5 — Cleanup and Basilisk test target (unpublished)
+
+[Cleanup] Extracted toolbar-placement initialization from the browser-load handler into `ensureToolbarButton()`. The classic Pale Moon and guarded Australis/CustomizableUI logic is unchanged.
+
+[Compatibility] Added Basilisk's current application ID `{ec8030f7-c20a-464f-9b0e-13a3a9e97384}` to `install.rdf` with version range `52.9.0–52.9.*` for manual testing. This historical ID is also used by Firefox; no Firefox support is claimed. Pale Moon's existing target range remains unchanged.
+
+[Unchanged] Translation engines, context menu, selection formatting, settings, toolbar button ID, add-on ID, cached translations and automated rules.
+
+[Tests] Added a manifest regression checking exact target IDs/ranges, version consistency and preservation of the extension ID.
+
+## 1.0.0b2a4 — Test build (guarded Australis toolbar placement)
+
+[Fixed] On Australis-style toolbars with a `customizationtarget` attribute, consult CustomizableUI placement before inserting the TWP widget. Preserve placement in any area without moving it. If unplaced on first installation, use CustomizableUI to add it to the navigation area. Never force classic `insertItem`/`currentset` persistence on an Australis toolbar.
+
+[Compatibility] This is a one-off defensive fix for Basilisk's inherited Firefox 29–56 toolbar architecture, **not** an official Basilisk support claim. Pale Moon's original classic toolbar logic and declared application ID range remain unchanged.
+
+[Tests] Added isolated runtime regression tests for existing Australis placement, initial placement, previously removed widget, failing CustomizableUI import, and unchanged classic Pale Moon behavior.
+
+[Unchanged] Google/Bing/DeepL backends, DeepL pacing, page/selection translation, context actions, settings, addon ID and privacy defaults.
+
+## 1.0.0b2a3 — Test build (DeepL pacing and page context menu)
+
+[Changed] Reduced experimental DeepL pacing from 1250ms to 750ms; still one request at a time, HTTP 429 stops immediately. Google/Bing unaffected.
+
+[Added] Native page context submenu with Translate page, Always translate current hostname, Forget translation for current hostname (clears site overrides and restores original), and Restore original.
+
+[Tests] Added context menu and DeepL pacing regression coverage. Remains an unpublished test build.
+
+## 1.0.0b2a2 — Google multiline PRE fix (unpublished test build)
+
+[Fixed] Restore Google's expected provider contract for synthetic text fragments produced by the multiline <pre> translation path. Each fragment now supplies a matching nodes[] entry; Google previously stopped with "missing[i].nodes is undefined". Bing's adapter and translation protocols are unchanged.
+
+[Tests] Added a regression exercising the actual Google adapter, its mocked HTTP response, segmentation/reassembly of a Japanese GitHub-style update history and Restore original. Demonstrated that the test fails in 1.0.0b2a1 before the fix and passes after it.
+
+[Unchanged] b2a1 whitespace/paragraph preservation, language detection, privacy settings, toolbar behavior, cache defaults and add-on ID.
+
+## 1.0.0b2a1 — Unpublished test build
+
+[Fixed] Preserve line breaks, blank lines, indentation and text boundaries when translating selected text or multiline preformatted README content.
+
+[Improved] When a user manually chooses Auto, a strong Japanese/Korean/Chinese script mismatch with the page's declared language requests detection from the translation provider instead of forcing the UI language.
+
+[Tests] Add regressions for CRLF, multi-paragraph selections, Japanese README histories and restoration.
+
+[Unchanged] Provider endpoints and explicit language choices, automatic site/language rules, add-on ID and preferences, toolbar behavior and privacy defaults.
+
 ## 1.0.0b1 — First beta candidate (release audit)
 
 [Changed] Updated version to `1.0.0b1`, without changing the existing add-on ID, settings or translation logic.

@@ -24,7 +24,7 @@ for rel in ('install.rdf', 'chrome.manifest', 'chrome/content/browserOverlay.xul
             'chrome/content/privacyXHR.js','chrome/content/googleProvider.js','chrome/content/bingProvider.js',
             'chrome/content/deeplProvider.js',
             'chrome/content/translationProviders.js','chrome/content/originalHover.js','chrome/content/persistentCache.js','chrome/content/pageAttributes.js','chrome/content/dynamicObserver.js',
-            'chrome/content/languageDetector.js',
+            'chrome/content/languageDetector.js','chrome/content/textLayout.js',
             'chrome/content/selectionResult.js','chrome/content/selectionResult.xul',
             'chrome/content/languageMenus.js','chrome/content/languageCatalog.js',
             'chrome/content/autoRules.js','chrome/content/mainPopup.js',

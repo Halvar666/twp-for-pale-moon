@@ -81,6 +81,37 @@ var TWPUXPBrowserChrome = (function () {
     setTimeout(function () { maybeAutoTranslate(doc); }, 350);
   }
 
+  // Site actions share the exact preference keys and match rules used by the
+  // toolbar popup; there is no second domain registry or translation history.
+  function exactHostRule(prefName, host) {
+    return TWPUXPAutoRules.parseHosts(getString(prefName, ""), false).indexOf(host) !== -1;
+  }
+  function setExactHostRule(prefName, host, enabled) {
+    var rules = TWPUXPAutoRules.parseHosts(getString(prefName, ""), false)
+      .filter(function(rule) { return rule !== host; });
+    if (enabled) rules.push(host);
+    setString(prefName, rules.join("\n"));
+  }
+  function enableSiteAutoTranslation(host) {
+    var info = getPageInfo();
+    if (!info.supported || !host || info.host !== host) return;
+    var enabled = !exactHostRule("autoTranslateSites", host);
+    setExactHostRule("autoTranslateSites", host, enabled);
+    if (enabled) {
+      setExactHostRule("neverTranslateSites", host, false);
+      prefs.setBoolPref(P + "autoTranslateEnabled", true);
+      // Do not wait for a reload when the current page has not been translated.
+      if (!info.running && !info.translated) translateCurrentPage();
+    }
+  }
+  function forgetSiteTranslation(host) {
+    var info = getPageInfo();
+    if (!info.supported || !host || info.host !== host) return;
+    // Forget exact site overrides, not other sites or the optional text cache.
+    setExactHostRule("autoTranslateSites", host, false);
+    setExactHostRule("neverTranslateSites", host, false);
+    if (info.running || info.translated) restoreCurrentPage();
+  }
   function installPageSelectionMenu() {
     var contextMenu = document.getElementById("contentAreaContextMenu");
     if (!contextMenu || document.getElementById("twpuxp-context-translate-selected")) return;
@@ -94,10 +125,55 @@ var TWPUXPBrowserChrome = (function () {
       translateSelectedText(selection);
     }, false);
     contextMenu.appendChild(item);
+
+    var siteMenu = document.createElement("menu");
+    siteMenu.id = "twpuxp-context-site-menu";
+    siteMenu.setAttribute("label", "TWP for Pale Moon");
+    var submenu = document.createElement("menupopup");
+    var translateItem = document.createElement("menuitem");
+    translateItem.id = "twpuxp-context-translate-page";
+    translateItem.setAttribute("label", "Translate page");
+    translateItem.addEventListener("command", function() { translateCurrentPage(); }, false);
+    submenu.appendChild(translateItem);
+    var alwaysItem = document.createElement("menuitem");
+    alwaysItem.id = "twpuxp-context-always-site";
+    alwaysItem.setAttribute("type", "checkbox");
+    alwaysItem.addEventListener("command", function() {
+      var info = getPageInfo();
+      if (info.supported && info.host) enableSiteAutoTranslation(info.host);
+    }, false);
+    submenu.appendChild(alwaysItem);
+    var forgetItem = document.createElement("menuitem");
+    forgetItem.id = "twpuxp-context-forget-site";
+    forgetItem.setAttribute("tooltiptext", "Remove saved site translation rules and restore original text; the translation cache is unchanged.");
+    forgetItem.addEventListener("command", function() {
+      var info = getPageInfo();
+      if (info.supported && info.host) forgetSiteTranslation(info.host);
+    }, false);
+    submenu.appendChild(forgetItem);
+    var restoreItem = document.createElement("menuitem");
+    restoreItem.id = "twpuxp-context-restore-page";
+    restoreItem.setAttribute("label", "Restore original page");
+    restoreItem.addEventListener("command", restoreCurrentPage, false);
+    submenu.appendChild(restoreItem);
+    siteMenu.appendChild(submenu);
+    contextMenu.appendChild(siteMenu);
+
     contextMenu.addEventListener("popupshowing", function(event) {
       if (event.target !== contextMenu) return;
       lastContextSelection = getSelectionInfo();
       item.hidden = !lastContextSelection;
+      var info = getPageInfo();
+      siteMenu.hidden = !info.supported || !info.host;
+      if (!info.supported || !info.host) return;
+      var auto = exactHostRule("autoTranslateSites", info.host);
+      var blocked = exactHostRule("neverTranslateSites", info.host);
+      alwaysItem.setAttribute("label", "Always translate " + info.host);
+      alwaysItem.setAttribute("checked", auto ? "true" : "false");
+      forgetItem.setAttribute("label", "Forget translation for " + info.host);
+      forgetItem.disabled = !auto && !blocked && !info.running && !info.translated;
+      restoreItem.disabled = !info.running && !info.translated;
+      translateItem.disabled = info.running;
     }, false);
   }
 
@@ -207,6 +283,53 @@ var TWPUXPBrowserChrome = (function () {
     }
     return false;
   }
+  // Keep toolbar placement separate from browser-event initialization.
+  // Classic Pale Moon and Australis/CustomizableUI paths remain unchanged.
+  function ensureToolbarButton() {
+    try {
+      if (prefs.getBoolPref(P + "toolbarInserted")) return;
+    } catch (e) {}
+    var toolbar = document.getElementById("nav-bar");
+    var button = document.getElementById(BUTTON_ID);
+    // Australis-style toolbars (e.g. Basilisk) have a separate customization
+    // target and track widget placement in CustomizableUI. A button there is
+    // NOT a direct child of nav-bar. The legacy insertItem() path would
+    // therefore move it again on each startup, overwriting user placement.
+    // Only use this guarded branch when a customizationtarget is declared;
+    // Pale Moon's existing classic-toolbar path stays exactly as it was.
+    if (toolbar && toolbar.getAttribute && toolbar.getAttribute("customizationtarget")) {
+      try {
+        var scope = {};
+        Components.utils.import("resource:///modules/CustomizableUI.jsm", scope);
+        var cui = scope.CustomizableUI;
+        if (!cui || typeof cui.getPlacementOfWidget !== "function") return;
+        // In any area (including a different toolbar, overflow or panel),
+        // an existing placement is the user's choice: never move it.
+        if (cui.getPlacementOfWidget(BUTTON_ID)) {
+          prefs.setBoolPref(P + "toolbarInserted", true);
+          return;
+        }
+        // First installation only: ask Australis to place the widget in its
+        // own default area. Do not persist classic currentset on this path.
+        if (!button || typeof cui.addWidgetToArea !== "function") return;
+        cui.addWidgetToArea(BUTTON_ID, cui.AREA_NAVBAR || "nav-bar");
+        if (cui.getPlacementOfWidget(BUTTON_ID))
+          prefs.setBoolPref(P + "toolbarInserted", true);
+      } catch (e2) {
+        // If CustomizableUI cannot be accessed, leave user layout alone.
+        // Never fall back to the classic insertItem() on Australis toolbars.
+      }
+      return;
+    }
+    // Classic Pale Moon toolbar placement is unchanged from b2a3.
+    // Overlay buttons can exist in BrowserToolbarPalette before insertion.
+    if (toolbar && toolbar.insertItem && button && button.parentNode !== toolbar) {
+      try { toolbar.insertItem(BUTTON_ID, null); } catch (e3) { return; }
+      try { toolbar.setAttribute("currentset", toolbar.currentSet); document.persist(toolbar.id, "currentset"); } catch (e4) {}
+    }
+    button = document.getElementById(BUTTON_ID);
+    if (button && button.parentNode === toolbar) prefs.setBoolPref(P + "toolbarInserted", true);
+  }
   function onLoad() {
     // Migrate the previous default limit if stored as a user pref. Other
     // deliberate nondefault limits are preserved. New default is 0 (all).
@@ -227,20 +350,7 @@ var TWPUXPBrowserChrome = (function () {
       }
       onSelectedTab();
     } catch(e) {}
-    try {
-      if (prefs.getBoolPref(P + "toolbarInserted")) return;
-    } catch (e) {}
-    var toolbar = document.getElementById("nav-bar");
-    var button = document.getElementById(BUTTON_ID);
-    // XUL overlay buttons normally exist in BrowserToolbarPalette even before
-    // they are inserted into a live toolbar; their presence alone is NOT proof
-    // that Customize Toolbar placed the item. Always inspect parentNode.
-    if (toolbar && toolbar.insertItem && button && button.parentNode !== toolbar) {
-      try { toolbar.insertItem(BUTTON_ID, null); } catch (e2) { return; }
-      try { toolbar.setAttribute("currentset", toolbar.currentSet); document.persist(toolbar.id, "currentset"); } catch (e3) {}
-    }
-    button = document.getElementById(BUTTON_ID);
-    if (button && button.parentNode === toolbar) prefs.setBoolPref(P + "toolbarInserted", true);
+    ensureToolbarButton();
   }
   window.addEventListener("load", onLoad, false);
   window.addEventListener("unload", function () {

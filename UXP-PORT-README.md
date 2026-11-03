@@ -1,7 +1,7 @@
 # TWP for Pale Moon
 
-**Version:** 1.0.0b1 (first public beta candidate)  
-**Platform:** Pale Moon 33–35 declared compatibility; manually tested on Pale Moon 35 (native UXP extension)  
+**Version:** 1.0.0b2 (beta release candidate)  
+**Platform:** Pale Moon 33–35 declared (primary browser); Basilisk 52.9.* has **basic compatibility**. The maintainer has confirmed that Basilisk toolbar placement remains stable after restarts; full feature testing there is not claimed.  
 **License:** MPL 2.0 (see `LICENSE` and `CREDITS-UXP.md`)  
 **Origin:** Unofficial native port of [TWP – Translate Web Pages](https://github.com/FilipePS/Traduzir-paginas-web) by FilipePS. This is **not an official release** of upstream TWP.
 
@@ -18,6 +18,8 @@ The port adds a native toolbar button, translation popup, language settings and 
 - Optional persistent SQLite translation cache in the Pale Moon profile. **Disabled by default**; user may clear cached translations.
 - **Privacy-enhanced translation requests enabled by default** to suppress cookies/credentials and clear Referer when supported by the UXP channel. Fails closed if the required channel protection cannot be applied.
 - Theme-independent toolbar button styling for regular/compact toolbars and the Customize Toolbar palette.
+- Preserve line breaks, blank lines and indentation in selected-text translation and preformatted natural-language text.
+- Context submenu for page translation and per-site automatic translation rules. Experimental DeepL dispatch pacing reduced to 750 ms (still one concurrent request).
 
 ## Limitations and privacy
 
@@ -25,9 +27,11 @@ The port adds a native toolbar button, translation popup, language settings and 
 - The provider still receives the **translated text and public/VPN IP address**. Privacy-enhanced requests are **not anonymity**. See [`docs/PRIVACY-UXP.md`](docs/PRIVACY-UXP.md).
 - Translation support does **not** include cross-origin iframe DOMs or every original WebExtension TWP feature. Google and Bing were tested on large pages, but provider availability cannot be guaranteed.
 - Storing translations on disk can expose personal/sensitive page text to anyone with access to the local profile. Enable persistent cache only if acceptable; turning it off does **not** delete prior entries. Private windows do not use the persistent cache.
-- **Beta software, not a stable release.** This build passed 37 automated regression suites; the maintainer reported on 2 November 2026 that the installed 1.0.0b1 is functional in Pale Moon. Further multi-browser and long-term provider testing remain desirable.
+- **Beta software, not a stable release.** The 1.0.0b2 release candidate is covered by 45 automated regression suites, including multiline text, Google provider contract, DeepL pacing, context-menu behavior, and toolbar placement. Real-world testing of all supported browser versions and translation providers is not complete.
 
 ## Install / update
+
+In `1.0.0b2`, a second `targetApplication` allows installation in **Basilisk 52.9.x**. Its Australis-style toolbar placement is handled separately from classic Pale Moon toolbars, and the maintainer verified that the Basilisk button remains in place after restarting. This is **basic compatibility**, not a guarantee that all TWP features work in Basilisk. Basilisk uses Firefox's historical application ID `{ec8030f7-c20a-464f-9b0e-13a3a9e97384}`; the manifest entry could therefore also match old Firefox builds, **which are not supported**. Pale Moon remains the primary target.
 
 Install the generated XPI from Pale Moon's Add-ons Manager. Updating from `0.0.1a33` preserves the existing add-on identifier `twp-uxp-prototype@unofficial.local` **intentionally**, so your preferences, toolbar placement, cache and custom shortcuts remain associated with the same extension. Do not rename this ID merely to remove the legacy word 'prototype'; changing it would create a separate add-on.
 
@@ -49,7 +53,7 @@ python3 tools/run-uxp-tests.py
 
 The default test command **discovers and runs every** `test-*.js` and `test-*.py` under `tools/` and `uxp/tests/` (not just a curated subset). Each fixture has an isolated process, a per-test timeout, and a strict exit-code check. Run `python3 tools/run-uxp-tests.py --list` to inspect the suite or `--filter bing` to narrow it. Legacy integration fixtures load the *real* persistent-cache module in a disabled, mock-pref environment. Privacy-network transport is tested separately with a simulated channel; no tests send internet traffic. Node tests cannot substitute for a real Pale Moon smoke test.
 
-`src/`, `upstream/README-original-TWP.md`, `PRIVACY`, upstream build scripts and other upstream files preserve the original project for reference. The original upstream readme was moved to a separate path to avoid confusion with this port's root README on GitHub and on case-insensitive file systems. Upstream `PRIVACY` describes its original browser extension, **not** the native UXP port. See [`docs/PRIVACY-UXP.md`](docs/PRIVACY-UXP.md) for this fork's behavior. The original chronology is archived in [`docs/DEVELOPMENT-HISTORY.md`](docs/DEVELOPMENT-HISTORY.md); subsequent changes go to [`CHANGELOG-UXP.md`](CHANGELOG-UXP.md).
+`src/`, `upstream/README-original-TWP.md`, `upstream/PRIVACY-original-TWP`, upstream build scripts and other upstream files preserve the original project for reference. The original upstream readme was moved to a separate path to avoid confusion with this port's root README on GitHub and on case-insensitive file systems. The archived upstream privacy statement describes its original browser extension, **not** the native UXP port. See [`docs/PRIVACY-UXP.md`](docs/PRIVACY-UXP.md) for this fork's behavior. The original chronology is archived in [`docs/DEVELOPMENT-HISTORY.md`](docs/DEVELOPMENT-HISTORY.md); subsequent changes go to [`CHANGELOG-UXP.md`](CHANGELOG-UXP.md).
 
 ## Runtime architecture after Cleanup 3
 
@@ -64,13 +68,13 @@ Factories receive **explicit context dependencies** and share the original per-w
 
 For the historical a32 scheduler lifecycle and error recovery acceptance criteria see [`docs/STABILIZATION-CHECKLIST.md`](docs/STABILIZATION-CHECKLIST.md).
 
-## Manual smoke test for 1.0.0b1
+## Manual smoke test for 1.0.0b2
 
-1. Install 1.0.0b1 over the known-good a33 without resetting prefs. Check Google/Bing page and selection translation, Restore, popup, hover and cache as appropriate.
+1. Install 1.0.0b2 over the published 1.0.0b1 without resetting prefs. Check Google/Bing page and selection translation, Restore, popup, hover and cache as appropriate.
 2. Toggle Privacy-enhanced translation requests; the original preference value must be preserved.
 3. Test the icon in default and custom themes, both normal and small toolbars; drag it into Customize Toolbar and back. Other toolbar icons must retain their sizing and sprite regions.
 4. Open right-click menu → **About TWP for Pale Moon**. Check that it displays the installed version (read dynamically) and no longer says Experimental/Prototype.
-5. Confirm the keyboard shortcuts, per-site rules and selection context menu still respond. Check the About dialog shows `1.0.0b1`. **DeepL remains experimental**.
+5. Confirm the keyboard shortcuts, per-site rules and selection context menu still respond. Check the About dialog shows `1.0.0b2`. **DeepL remains experimental**.
 
 
 6. Stress-test cancellation during an in-flight request: cancel halfway through, verify no late response rewrites the DOM, restore the original, then retry. Switch tabs during an active translation and verify only the intended tab is modified.
@@ -82,6 +86,17 @@ Floating translation progress notifications are **off by default**. Open **Prefe
 
 ## Beta provenance and support
 
-This beta candidate includes modified code based on **TWP – Translate Web Pages** by **FilipePS and contributors**, published under MPL 2.0. Its current upstream repository is <https://github.com/FilipePS/Traduzir-paginas-web>. It is **not an official FilipePS release**, and the upstream repository is not this port's support or issue tracker. The intended independent source repository is `Halvar666/twp-for-pale-moon`; its GitHub URL should not be treated as active until the repository exists.
+This beta release candidate includes modified code based on **TWP – Translate Web Pages** by **FilipePS and contributors**, published under MPL 2.0. Its current upstream repository is <https://github.com/FilipePS/Traduzir-paginas-web>. It is **not an official FilipePS release**, and the upstream repository is not this port's support or issue tracker. The independent source repository is <https://github.com/Halvar666/twp-for-pale-moon>.
 
-Please consult `CREDITS-UXP.md` and `docs/BETA-RELEASE-CHECKLIST.md` before publicly publishing this build. The maintainer has confirmed the provenance of the custom port icons; see `CREDITS-UXP.md` and `uxp/artwork/`.
+The maintainer has tested the preceding beta candidates in Pale Moon and checked toolbar placement in Basilisk. The final b2 package should be smoke-tested before publishing. The maintainer has confirmed the provenance of the custom port icons; see `CREDITS-UXP.md` and `uxp/artwork/`.
+
+### Historical b2a1 test focus
+
+- Selected-text translation: preserve internal line breaks, blank lines, CRLF and indentation, including selections exceeding 780 characters.
+- README pages with `<pre>` change histories: retain every line while translating natural-language content. Code blocks remain subject to existing translation exclusions; the extension does not promise to translate source code.
+- Manual Auto source selection: when Japanese/CJK text conflicts with an English UI language declaration, allow provider text-based detection instead. Explicit source choices and automatic-translation site/language rules remain unchanged.
+- **Known limitation:** third-party translation services can still change punctuation or wording within each line.
+
+### 1.0.0b2a2 Google fix (unpublished)
+
+The b2a1 multiline-PRE path created synthetic translation pieces with `originals` but without `nodes`. Bing accepts these pieces, but Google requires the matching `nodes` array to decode its indexed HTML response. b2a2 restores the provider contract without changing the Google or Bing adapters or the original DOM node until the complete translation is assembled. The new integration regression calls the real Google adapter with mocked HTTP responses.

@@ -13,7 +13,7 @@ root = pathlib.Path(__file__).resolve().parents[1]
 xml_ns = {'em': 'http://www.mozilla.org/2004/em-rdf#'}
 source_manifest = ET.parse(root / 'uxp/install.rdf')
 version = source_manifest.find('.//em:version', xml_ns).text
-assert re.fullmatch(r'\d+\.\d+\.\d+(?:a\d+|b\d+|rc\d+)?', version), version
+assert re.fullmatch(r'\d+\.\d+\.\d+(?:a\d+|b\d+(?:a\d+)?|rc\d+)?', version), version
 with tempfile.TemporaryDirectory(prefix='twp-a31-package-') as tmp:
     outfile = pathlib.Path(tmp) / 'test-package.xpi'
     subprocess.run([sys.executable, str(root / 'tools/build-uxp.py'), str(outfile)],

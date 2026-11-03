@@ -36,33 +36,19 @@ var TWPUXPSelectionController = (function () {
       } catch (e) { selected = ""; }
       if (selected && selected.trim()) { selDoc = d; break; }
     }
-    return selected && selected.trim() ? {text: selected.trim(), doc: selDoc} : null;
-  }
-
-  // Splits long selections on a word boundary where possible, respecting the
-  // same per-fragment budget as TWP's translation provider. No truncation.
-  function splitSelectedText(text, maxChars) {
-    maxChars = maxChars || 780;
-    var out = [], rest = text.trim();
-    while (rest.length) {
-      if (rest.length <= maxChars) { out.push(rest); break; }
-      var candidate = rest.slice(0, maxChars);
-      var boundary = Math.max(candidate.lastIndexOf("\n"), candidate.lastIndexOf(" "));
-      if (boundary < maxChars / 3) boundary = maxChars;
-      var part = rest.slice(0, boundary).trim();
-      if (part) out.push(part);
-      rest = rest.slice(boundary).trim();
-    }
-    return out;
+    return selected && selected.trim() ? {text: selected, doc: selDoc} : null;
   }
 
   function translateSelectedText(selectionOverride) {
     var selection = selectionOverride && selectionOverride.text ? selectionOverride : getSelectionInfo();
     if (!selection) { window.alert("Select some text on a web page first."); return; }
     var fromPreference = getString("from", "auto");
-    var source = fromPreference === "auto" ? TWPUXPLanguage.detect(selection.doc) : fromPreference;
+    var source = fromPreference === "auto" ?
+      (TWPUXPLanguage.detectForText ? TWPUXPLanguage.detectForText(selection.doc, selection.text) :
+        TWPUXPLanguage.detect(selection.doc)) : fromPreference;
     var target = getString("to", "cs");
-    var fragments = splitSelectedText(selection.text, 780);
+    var layout = TWPUXPTextLayout.plan(selection.text, 780);
+    var fragments = layout.fragments;
     var key = getString("apiKey", "");
     var timeout = Math.max(3000, getInt("timeoutMs", 20000));
     var selectedService = getString('translationService','google');
@@ -93,7 +79,9 @@ var TWPUXPSelectionController = (function () {
         if (!chosenSource || !chosenTarget) {
           callback(new Error("Choose a source and target language")); return;
         }
-        var requestSource = chosenSource === "auto" ? TWPUXPLanguage.detect(originDoc) : chosenSource;
+        var requestSource = chosenSource === "auto" ?
+          (TWPUXPLanguage.detectForText ? TWPUXPLanguage.detectForText(originDoc, selection.text) :
+            TWPUXPLanguage.detect(originDoc)) : chosenSource;
         // Preserve the chosen direction for the next selection and toolbar
         // invocation, without altering the translation state of this page.
         setString("from", chosenSource);
@@ -104,14 +92,15 @@ var TWPUXPSelectionController = (function () {
         var nextIndex = 0, busy = 0, finished = 0, stopped = false;
         var concurrency = Math.min(3, Math.max(1, getInt("concurrentRequests", 3)));
         var batchSize = Math.min(8, Math.max(1, getInt("batchSize", 8)));
-        var spacing = chosenService === "deepl" ? 1250 : 0;
+        var spacing = chosenService === "deepl" ? 750 : 0;
         if (chosenService === "deepl") concurrency = 1;
         var nextAllowed = 0, scheduledSelection = false;
         function pump() {
           if (stopped) return;
           if (finished === fragments.length) {
             stopped = true;
-            callback(null, outputs.join(" "));
+            try { callback(null, TWPUXPTextLayout.restore(layout, outputs)); }
+            catch (layoutError) { callback(layoutError); }
             return;
           }
           while (!stopped && busy < concurrency && nextIndex < fragments.length) {

@@ -4,7 +4,7 @@
     <em:id>twp-uxp-prototype@unofficial.local</em:id>
     <em:type>2</em:type>
     <em:name>TWP for Pale Moon</em:name>
-    <em:version>1.0.0b1</em:version>
+    <em:version>1.0.0b2</em:version>
     <em:description>Unofficial native UXP port of TWP for Pale Moon. Google and Bing translation, optional DeepL, automatic rules and privacy-enhanced requests.</em:description>
     <em:optionsURL>chrome://twpuxp/content/options.xul</em:optionsURL>
     <em:iconURL>chrome://twpuxp/skin/icon-48.png</em:iconURL>
@@ -15,6 +15,14 @@
         <em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>
         <em:minVersion>33.0</em:minVersion>
         <em:maxVersion>35.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    <!-- Basic Basilisk 52.9.x compatibility; this ID is also used by historical Firefox. -->
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>52.9.0</em:minVersion>
+        <em:maxVersion>52.9.*</em:maxVersion>
       </Description>
     </em:targetApplication>
   </Description>

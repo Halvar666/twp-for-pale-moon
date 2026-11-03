@@ -5,7 +5,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '../..');
 function read(name) { return fs.readFileSync(path.join(root,name),'utf8'); }
-assert.match(read('uxp/install.rdf'), /<em:version>\d+\.\d+\.\d+(?:a\d+|b\d+|rc\d+)?<\/em:version>/);
+assert.match(read('uxp/install.rdf'), /<em:version>\d+\.\d+\.\d+(?:a\d+|b\d+(?:a\d+)?|rc\d+)?<\/em:version>/);
 const runner = read('tools/run-uxp-tests.py');
 assert.match(runner, /TEST_DIRS/);
 assert.match(runner, /subprocess\.run/);

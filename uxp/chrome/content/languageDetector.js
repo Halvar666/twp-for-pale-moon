@@ -39,5 +39,20 @@ var TWPUXPLanguage = (function () {
     }
     return "auto";
   }
-  return {detect: detect, normalize: normalize};
+  // A page can declare English for its UI while embedding a Japanese README,
+  // e.g. GitHub. Only when the user selects "auto" for a MANUAL translation,
+  // prefer the provider's real text-based detection on an obvious script
+  // mismatch. Leave explicit source choices and site-language auto rules alone.
+  function detectForText(doc, text) {
+    var metadata = detect(doc);
+    if (metadata === "auto" || !text) return metadata;
+    var sample = String(text).slice(0, 24000);
+    function count(pattern) { return (sample.match(pattern) || []).length; }
+    if (metadata !== "ja" && count(/[\u3040-\u30ff]/g) >= 3) return "auto";
+    if (metadata !== "ko" && count(/[\uac00-\ud7a3]/g) >= 5) return "auto";
+    if (metadata !== "ja" && metadata !== "zh-CN" && metadata !== "zh-TW" &&
+        count(/[\u3400-\u9fff]/g) >= 8) return "auto";
+    return metadata;
+  }
+  return {detect: detect, detectForText: detectForText, normalize: normalize};
 })();

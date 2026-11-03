@@ -1,0 +1,32 @@
+/* 1.0.0b2a1: selected-text layout, line endings and text-vs-page language. */
+'use strict';
+const fs = require('fs'), vm = require('vm'), path = require('path'), assert = require('assert');
+const base=path.resolve(__dirname, '../uxp/chrome/content');
+const ctx=vm.createContext({console,Map,Set,Array,Date,setTimeout,clearTimeout});
+for (const name of ['textLayout.js','languageDetector.js'])
+  vm.runInContext(fs.readFileSync(path.join(base,name),'utf8'),ctx,{filename:name});
+const layout=ctx.TWPUXPTextLayout;
+const sample='  Line one \r\n\r\n\t日本語の更新履歴   \r\n v2.5\r\n\r\nend '; 
+const plan=layout.plan(sample,780);
+assert.strictEqual(plan.fragments.length,4);
+assert(plan.fragments.every(f=>!/[\r\n]/.test(f)));
+const translated=plan.fragments.map(x=>`[${x}]`);
+const formatted=layout.restore(plan,translated);
+assert.strictEqual(formatted,'  [Line one] \r\n\r\n\t[日本語の更新履歴]   \r\n [v2.5]\r\n\r\n[end] ');
+assert.strictEqual((formatted.match(/\r\n/g)||[]).length,5);
+const long='A '.repeat(1050)+'\n\nlast line';
+const big=layout.plan(long,780);
+assert(big.fragments.length>2 && big.fragments.every(x=>x.length<=780));
+assert.strictEqual(layout.restore(big,big.fragments),long,'long selection must be reconstructed byte-for-byte');
+const japanese='改良点\n\n'+ '更新履歴\n'.repeat(15);
+const multi=layout.plan(japanese,780);
+assert.strictEqual(layout.restore(multi,multi.fragments),japanese);
+assert.throws(()=>layout.restore(plan,[]),/Incomplete multiline/);
+const doc={documentElement:{getAttribute(n){return n==='lang'?'en-US':null}},querySelectorAll(){return []}};
+assert.strictEqual(ctx.TWPUXPLanguage.detect(doc),'en');
+assert.strictEqual(ctx.TWPUXPLanguage.detectForText(doc,'Hello there'),'en');
+assert.strictEqual(ctx.TWPUXPLanguage.detectForText(doc,'■更新履歴: 日本語の説明と更新情報'),'auto');
+assert.strictEqual(ctx.TWPUXPLanguage.detectForText(doc,'한글을 테스트합니다'),'auto');
+const japaneseDoc={documentElement:{getAttribute(n){return n==='lang'?'ja':null}},querySelectorAll(){return []}};
+assert.strictEqual(ctx.TWPUXPLanguage.detectForText(japaneseDoc,'更新履歴'),'ja');
+console.log('PASS b2a1 layout: CRLF, blank lines, indentation, long selections, CJK language mismatch');

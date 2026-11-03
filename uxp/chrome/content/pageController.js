@@ -194,6 +194,9 @@ var TWPUXPPageController = (function () {
       setString("from", requestedSource);
       setString("to", to);
     }
+    // For manual translation, a Japanese/other CJK document embedded in an
+    // English-language website must not be forced to translate from English.
+    // Auto-translation rules continue to rely on declared page metadata.
     from = requestedSource === "auto" ? TWPUXPLanguage.detect(doc) : requestedSource;
     var service = isDynamic ? (state.service || 'google') : getString('translationService','google');
     if (!TWPUXPProviders.has(service)) service = 'google';
@@ -216,6 +219,16 @@ var TWPUXPPageController = (function () {
       if (!isDynamic) status(doc, "No eligible text nodes on this page", true);
       return;
     }
+    if (!options.automatic && !isDynamic && requestedSource === "auto" &&
+        typeof TWPUXPLanguage.detectForText === "function") {
+      var sourceSample = "";
+      for (var sampleIndex = 0; sampleIndex < pieces.length && sourceSample.length < 24000; sampleIndex++)
+        sourceSample += pieces[sampleIndex].originals.join(" ") + " ";
+      from = TWPUXPLanguage.detectForText(doc, sourceSample);
+      // Dynamic translation reuses state.source; keep it consistent with the
+      // source language actually sent to the provider on the initial page.
+      state.source = from;
+    }
     pieces = TWPUXPPageTranslator.prioritizeVisible(pieces, doc);
     if (!isDynamic) {
       startDynamic(doc, state);
@@ -230,8 +243,9 @@ var TWPUXPPageController = (function () {
     var timeout = Math.max(3000, getInt("timeoutMs", 20000));
     var delay = Math.max(0, getInt("requestDelayMs", 0));
     // The anonymous DeepL endpoint has undocumented request limits.
-    // Apply a conservative cap only to DeepL. Keep Google/Bing fast.
-    if (service === "deepl") { concurrency = 1; delay = Math.max(delay, 1250); }
+    // Keep DeepL serialized with 750ms pacing; do not retry rate-limited requests.
+    // Google/Bing retain their existing parallel scheduling.
+    if (service === "deepl") { concurrency = 1; delay = Math.max(delay, 750); }
     var token = ++state.serial;
     state.running = true;
     var index = 0, inFlight = 0, completed = 0, finishedGroups = 0, skippedNodes = 0;
@@ -255,6 +269,86 @@ var TWPUXPPageController = (function () {
       if (!isActive() || scheduled) return;
       scheduled = true;
       setTimeout(function () { scheduled = false; pump(); }, Math.max(0, wait));
+    }
+    // Preserve line layout for a single multiline text node inside <pre>.
+    // The provider only receives nonempty segments; separators stay local.
+    // All other DOM nodes retain the existing fast paragraph algorithm.
+    function isPreformatted(piece) {
+      if (piece.nodes.length !== 1 || !/[\r\n]/.test(piece.originals[0])) return false;
+      var parent = piece.nodes[0].parentNode;
+      while (parent && parent !== doc.body) {
+        if (parent.nodeName === "PRE") return true;
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+    function translateWithLayout(batch, callback) {
+      if (typeof TWPUXPTextLayout === "undefined" ||
+          !batch.some(isPreformatted)) {
+        TWPUXPCache.translatePieces(provider, service, batch, from, to, doc,
+          getString("apiKey", ""), timeout, callback);
+        return;
+      }
+      var expanded = [], mapping = [];
+      batch.forEach(function(piece) {
+        if (!isPreformatted(piece)) {
+          mapping.push({index: expanded.length});
+          expanded.push(piece);
+          return;
+        }
+        var layout = TWPUXPTextLayout.plan(piece.originals[0], 780);
+        if (!layout.fragments.length) {
+          // Not useful to translate a whitespace-only block.
+          mapping.push({index: expanded.length});
+          expanded.push(piece);
+          return;
+        }
+        mapping.push({start: expanded.length, count: layout.fragments.length, layout: layout});
+        layout.fragments.forEach(function(text) {
+          // Keep a one-to-one nodes[]/originals[] contract for all providers.
+          // Google uses nodes.length to decode indexed response segments.
+          // This reference is metadata only; the original PRE node is written
+          // once, after all the translated lines have been reassembled.
+          expanded.push({nodes: [piece.nodes[0]], originals: [text]});
+        });
+      });
+      var responses = new Array(expanded.length), cursor = 0, totalFailed = 0;
+      function next() {
+        if (!isActive()) return;
+        if (cursor >= expanded.length) {
+          try {
+            var assembled = mapping.map(function(item) {
+              if (!item.layout) return responses[item.index];
+              var values = responses.slice(item.start, item.start + item.count)
+                .map(function(a) { return a && a[0]; });
+              return [TWPUXPTextLayout.restore(item.layout, values)];
+            });
+            if (totalFailed) assembled.failedSegments = totalFailed;
+            callback(null, assembled);
+          } catch (e) { callback(e); }
+          return;
+        }
+        var chunk = [], size = 0;
+        while (cursor < expanded.length && chunk.length < 8) {
+          var item = expanded[cursor], length = item.originals.join("").length;
+          if (chunk.length && size + length > 780) break;
+          chunk.push(item); size += length; cursor++;
+        }
+        var at = cursor - chunk.length;
+        TWPUXPCache.translatePieces(provider, service, chunk, from, to, doc,
+          getString("apiKey", ""), timeout, function(err, translated) {
+            if (!isActive()) return;
+            if (err || !translated || translated.length !== chunk.length) {
+              callback(err || new Error("Incomplete preformatted text response"));
+              return;
+            }
+            for (var i = 0; i < translated.length; i++) responses[at + i] = translated[i];
+            if (translated.failedSegments) totalFailed += translated.failedSegments;
+            if (service === "deepl" && cursor < expanded.length) setTimeout(next, 750);
+            else setTimeout(next, 0); // no deep recursion on synchronous cache hits
+          });
+      }
+      next();
     }
     function pump() {
       if (!isActive()) return;
@@ -375,8 +469,7 @@ var TWPUXPPageController = (function () {
           }
           try {
             if (grouped) {
-              TWPUXPCache.translatePieces(provider, service, batch, from, to, doc,
-                getString("apiKey", ""), timeout, done);
+              translateWithLayout(batch, done);
             } else {
               TWPUXPCache.translateMany(provider, service, batch.map(function(p) {
                 return p.originals[0].trim();

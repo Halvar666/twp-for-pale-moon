@@ -67,7 +67,7 @@ async function waitFor(predicate, timeoutMs=6500) {
  assert.equal(calls.length,4,'DeepL should finish all four pieces');
  assert.equal(maxFlight,1,'DeepL permits only one in-flight request');
  for(let i=1;i<calls.length;i++)
-  assert.ok(calls[i].at-calls[i-1].at>=1150,'DeepL requests must be paced');
+  assert.ok(calls[i].at-calls[i-1].at>=675,'DeepL requests must be paced by at least ~700 ms');
  assert.ok(activeDoc.nodes.every(n=>n.nodeValue==='Český překlad'));
  // Google must preserve its original fast parallel requests.
  prefs['extensions.twpuxp.translationService']='google';

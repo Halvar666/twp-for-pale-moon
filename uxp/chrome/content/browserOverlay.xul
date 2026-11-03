@@ -10,6 +10,7 @@
   <script type="application/javascript" src="chrome://twpuxp/content/pageTranslator.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/pageAttributes.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/languageDetector.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/textLayout.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/dynamicObserver.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/languageCatalog.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/autoRules.js"/>

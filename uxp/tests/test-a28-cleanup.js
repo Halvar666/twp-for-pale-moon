@@ -6,7 +6,7 @@ const root=path.resolve(__dirname,'../..');
 function read(f){return fs.readFileSync(path.join(root,f),'utf8');}
 const install=read('uxp/install.rdf');
 assert.match(install,/<em:name>TWP for Pale Moon<\/em:name>/);
-assert.match(install,/<em:version>\d+\.\d+\.\d+(?:a\d+|b\d+|rc\d+)?<\/em:version>/);
+assert.match(install,/<em:version>\d+\.\d+\.\d+(?:a\d+|b\d+(?:a\d+)?|rc\d+)?<\/em:version>/);
 assert.match(install,/<em:id>twp-uxp-prototype@unofficial\.local<\/em:id>/,
   'Compatibility: never change the existing add-on ID');
 assert.doesNotMatch(install,/<em:name>[^<]*(Experimental|Prototype)/i);

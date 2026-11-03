@@ -11,15 +11,15 @@ const ctx={console,WeakMap,Set,Map,Date,Array,Math,Error,Components:{classes:{'@
  TWPUXPProviders:{has(n){return n==='google'},get(){return ctx.TWPGoogleProvider}},
  window:{addEventListener(){},removeEventListener(){},alert(m){throw Error(m)},openDialog(...args){dialogs.push(args)}},
  document:{getElementById(){return null}},setTimeout,clearTimeout};
-vm.createContext(ctx);require('./test-support/uxp-runtime').loadLegacyCache(ctx, require('node:path').join(__dirname,'..','uxp','chrome','content'));for(const name of ['pageController.js','selectionController.js','browserChrome.js']) {
+vm.createContext(ctx);require('./test-support/uxp-runtime').loadLegacyCache(ctx, require('node:path').join(__dirname,'..','uxp','chrome','content'));for(const name of ['textLayout.js','pageController.js','selectionController.js','browserChrome.js']) {
   vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'..','uxp','chrome','content',name),'utf8'),ctx,{filename:name});
 }
 vm.runInContext(js,ctx);
 ctx.TWPUXP.translateSelectedText();
-if(dialogs.length!==1||dialogs[0][3].original!=='Lorem ipsum dolor sit amet.'||dialogs[0][3].source!=='de')throw Error('failed original selection');
+if(dialogs.length!==1||dialogs[0][3].original!=='Lorem ipsum dolor sit amet.  '||dialogs[0][3].source!=='de')throw Error('failed original selection');
 let got;
 dialogs[0][3].request((error,txt)=>{if(error)throw error;got=txt});
-if(got!=='<cs>Lorem ipsum dolor sit amet.'||calls.length!==1)throw Error('request failed '+got);
+if(got!=='<cs>Lorem ipsum dolor sit amet.  '||calls.length!==1)throw Error('request failed '+got);
 console.log('PASS ordinary selected text, auto language and provider invocation');
 // Test much longer selections (under 20K), request must not drop chars.
 page.defaultView.getSelection=()=>Array.from({length:2000},()=> 'hello').join(' ');
