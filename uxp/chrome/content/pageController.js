@@ -7,6 +7,13 @@
 var TWPUXPPageController = (function () {
   "use strict";
   function create(context) {
+  function L(key, fallback, args) {
+    return typeof TWPUXPL10n !== "undefined" ?
+      TWPUXPL10n.get(key, fallback, args) :
+      (args ? args.reduce(function(s, item, i) {
+        return s.split("{" + i + "}").join(String(item));
+      }, fallback) : fallback);
+  }
   var getDoc = context.getDoc, getState = context.getState;
   var getBool = context.getBool, getInt = context.getInt;
   var getString = context.getString, setString = context.setString;
@@ -169,14 +176,14 @@ var TWPUXPPageController = (function () {
     }
     state.originals = [];
     state.lastWritten = new WeakMap();
-    status(doc, "Original text restored (" + done + " nodes)", false);
+    status(doc, L("page.restored", "Original text restored ({0} nodes)", [done]), false);
   }
 
   function translateCurrentPage(from, to, options) {
     options = options || {};
     var doc = options.doc || getDoc();
     if (!doc || !doc.body || !/^https?:$/.test(doc.location.protocol)) {
-      window.alert("TWP for Pale Moon: Open a normal http(s) web page first."); return;
+      window.alert(L("page.needHttp", "TWP for Pale Moon: Open a normal http(s) web page first.")); return;
     }
     var isDynamic = !!options.dynamicPieces;
     var requestedSource = options.automatic ? TWPUXPLanguage.detect(doc) :
@@ -185,7 +192,7 @@ var TWPUXPPageController = (function () {
         getString('translationService','google'))) requestedSource = 'auto';
     to = to || getString("to", "cs");
     var state = getState(doc);
-    if (state.running) { if (!isDynamic) status(doc, "Translation is already running", false); return; }
+    if (state.running) { if (!isDynamic) status(doc, L("page.alreadyRunning", "Translation is already running"), false); return; }
     if (!isDynamic && state.originals.length) restoreCurrentPage();
     if (!isDynamic && !options.automatic) {
       // An explicit source selected in the toolbar menu is remembered.
@@ -216,7 +223,7 @@ var TWPUXPPageController = (function () {
       }
     }
     if (!pieces.length) {
-      if (!isDynamic) status(doc, "No eligible text nodes on this page", true);
+      if (!isDynamic) status(doc, L("page.noNodes", "No eligible text nodes on this page"), true);
       return;
     }
     if (!options.automatic && !isDynamic && requestedSource === "auto" &&
@@ -243,26 +250,44 @@ var TWPUXPPageController = (function () {
     var timeout = Math.max(3000, getInt("timeoutMs", 20000));
     var delay = Math.max(0, getInt("requestDelayMs", 0));
     // The anonymous DeepL endpoint has undocumented request limits.
-    // Keep DeepL serialized with 750ms pacing; do not retry rate-limited requests.
+    // Keep DeepL serialized with 750ms pacing; never repeat HTTP 429.
     // Google/Bing retain their existing parallel scheduling.
     if (service === "deepl") { concurrency = 1; delay = Math.max(delay, 750); }
+    var dictionaryEntries = typeof TWPUXPCustomDictionary === "undefined" ? [] :
+      TWPUXPCustomDictionary.read(getString("customDictionary", ""));
+    function dictionaryPieces(items, callback) {
+      if (typeof TWPUXPCustomDictionary === "undefined" || !dictionaryEntries.length)
+        TWPUXPCache.translatePieces(provider, service, items, from, to, doc,
+          getString("apiKey", ""), timeout, callback);
+      else
+        TWPUXPCustomDictionary.translatePieceBatch(TWPUXPCache, provider, service, items,
+          from, to, doc, getString("apiKey", ""), timeout, dictionaryEntries, callback);
+    }
+    function dictionaryMany(items, callback) {
+      if (typeof TWPUXPCustomDictionary === "undefined" || !dictionaryEntries.length)
+        TWPUXPCache.translateMany(provider, service, items, from, to, doc,
+          getString("apiKey", ""), timeout, callback);
+      else
+        TWPUXPCustomDictionary.translateTextBatch(TWPUXPCache, provider, service, items,
+          from, to, doc, getString("apiKey", ""), timeout, dictionaryEntries, callback);
+    }
     var token = ++state.serial;
     state.running = true;
     var index = 0, inFlight = 0, completed = 0, finishedGroups = 0, skippedNodes = 0;
     var failedGroups = 0, transientFailures = 0, totalTransientFailures = 0, failureStatus = '';
     var lastMessage = 0, nextAllowedDispatch = 0, scheduled = false;
     var stopOnError = true;
-    status(doc, (isDynamic ? "Updating " : "Translating ") + from + " → " + to + " (" + totalNodes +
-      " nodes / " + pieces.length + " groups, " + (grouped ? "TWP" : "classic") +
-      ", " + concurrency + " requests in parallel, " + service + ")", false);
+    status(doc, L("page.start", "{0} {1} → {2} ({3} nodes / {4} groups, {5}, {6} requests in parallel, {7})",
+      [isDynamic ? L("page.updating", "Updating") : L("page.translating", "Translating"),
+       from, to, totalNodes, pieces.length, grouped ? "TWP" : L("page.classic", "classic"), concurrency, service]), false);
 
     function isActive() { return token === state.serial && state.running; }
     function progress(force) {
       var now = Date.now();
       if (force || now - lastMessage >= 400) {
         lastMessage = now;
-        status(doc, "Translated " + completed + "/" + totalNodes +
-          " nodes (" + finishedGroups + "/" + pieces.length + " groups)", false);
+        status(doc, L("page.progress", "Translated {0}/{1} nodes ({2}/{3} groups)",
+          [completed,totalNodes,finishedGroups,pieces.length]), false);
       }
     }
     function schedulePump(wait) {
@@ -285,8 +310,7 @@ var TWPUXPPageController = (function () {
     function translateWithLayout(batch, callback) {
       if (typeof TWPUXPTextLayout === "undefined" ||
           !batch.some(isPreformatted)) {
-        TWPUXPCache.translatePieces(provider, service, batch, from, to, doc,
-          getString("apiKey", ""), timeout, callback);
+        dictionaryPieces(batch, callback);
         return;
       }
       var expanded = [], mapping = [];
@@ -335,8 +359,7 @@ var TWPUXPPageController = (function () {
           chunk.push(item); size += length; cursor++;
         }
         var at = cursor - chunk.length;
-        TWPUXPCache.translatePieces(provider, service, chunk, from, to, doc,
-          getString("apiKey", ""), timeout, function(err, translated) {
+        dictionaryPieces(chunk, function(err, translated) {
             if (!isActive()) return;
             if (err || !translated || translated.length !== chunk.length) {
               callback(err || new Error("Incomplete preformatted text response"));
@@ -354,10 +377,11 @@ var TWPUXPPageController = (function () {
       if (!isActive()) return;
       if (index >= pieces.length && inFlight === 0) {
         state.running = false;
-        status(doc, (isDynamic ? "Dynamic content updated: " : "Finished: ") +
-          completed + "/" + totalNodes + " text nodes (" + pieces.length + " groups)" +
-          (skippedNodes ? "; " + skippedNodes + " untranslated node(s)" : "") +
-          (failedGroups ? " in " + failedGroups + " failed group(s)" : ""),
+        status(doc, L("page.finished", "{0} {1}/{2} text nodes ({3} groups){4}{5}",
+          [isDynamic ? L("page.dynamicFinished", "Dynamic content updated:") : L("page.finishedLabel", "Finished:"),
+            completed,totalNodes,pieces.length,
+            skippedNodes ? L("page.untranslated", "; {0} untranslated node(s)", [skippedNodes]) : "",
+            failedGroups ? L("page.failedGroups", " in {0} failed group(s)", [failedGroups]) : ""]),
           skippedNodes > 0);
         scheduleDynamic(doc, state);
         return;
@@ -388,13 +412,21 @@ var TWPUXPPageController = (function () {
             if (!isActive()) return; // Restore/Cancel invalidates old responses.
             inFlight--;
             if (err) {
-              if (service === "deepl" && (err.rateLimited || err.httpStatus === 429)) {
+              if (err.rateLimited || err.httpStatus === 429) {
                 state.running = false;
                 ++state.serial;
                 stopDynamic(state);
-                status(doc, "DeepL has limited translation requests (HTTP 429). " +
-                  "Stopped after " + completed + "/" + totalNodes +
-                  " translated nodes. Choose Google or Bing, or try DeepL later.", true);
+                var providerLabel = service === "google" ? "Google" :
+                  (service === "bing" ? "Bing" : service);
+                var limitMessage = service === "deepl" ?
+                  L("page.deeplLimit", "DeepL has limited translation requests (HTTP 429). Stopped after {0}/{1} translated nodes. Choose Google or Bing, or try DeepL later.", [completed,totalNodes]) :
+                  L("page.serviceLimit", "{0} has limited translation requests (HTTP 429). Stopped after {1}/{2} translated nodes. Choose another service or try again later.",
+                    [providerLabel,completed,totalNodes]);
+                if (err.retryAfterMs > 0) {
+                  limitMessage += " " + L("page.retryAfter", "Try again in about {0} seconds.",
+                    [Math.ceil(err.retryAfterMs / 1000)]);
+                }
+                status(doc, limitMessage, true);
                 return;
               }
               if (err.retryable) {
@@ -413,20 +445,19 @@ var TWPUXPPageController = (function () {
                   state.running = false;
                   ++state.serial;
                   stopDynamic(state);
-                  status(doc, "Translation provider temporarily unavailable (" + failureStatus +
-                    "). Stopped after " + totalTransientFailures + " failed batches; " +
-                    completed + " nodes translated. Try Bing or translate again later.", true);
+                  status(doc, L("page.providerUnavailable", "Translation provider temporarily unavailable ({0}). Stopped after {1} failed batches; {2} nodes translated. Try Bing or translate again later.",
+                    [failureStatus,totalTransientFailures,completed]), true);
                 } else {
-                  status(doc, "Temporary " + service + " error (" + failureStatus +
-                    "): left " + failedNodeCount + " nodes unchanged; continuing…", true);
+                  status(doc, L("page.transientError", "Temporary {0} error ({1}): left {2} nodes unchanged; continuing…",
+                    [service,failureStatus,failedNodeCount]), true);
                   schedulePump(0);
                 }
               } else if (stopOnError) {
                 state.running = false;
                 ++state.serial; // invalidate other outstanding callbacks
                 stopDynamic(state);
-                status(doc, "Stopped at group " + (batchStart + 1) +
-                  "/" + pieces.length + " after " + completed + " nodes: " + err.message, true);
+                status(doc, L("page.groupStopped", "Stopped at group {0}/{1} after {2} nodes: {3}",
+                  [batchStart+1,pieces.length,completed,err.message]), true);
               }
               return;
             }
@@ -461,7 +492,7 @@ var TWPUXPPageController = (function () {
               state.running = false;
               ++state.serial;
               stopDynamic(state);
-              status(doc, "Could not map translated segments: " + e.message, true);
+              status(doc, L("page.mappingError", "Could not map translated segments: {0}", [e.message]), true);
               return;
             }
             progress(false);
@@ -471,9 +502,9 @@ var TWPUXPPageController = (function () {
             if (grouped) {
               translateWithLayout(batch, done);
             } else {
-              TWPUXPCache.translateMany(provider, service, batch.map(function(p) {
+              dictionaryMany(batch.map(function(p) {
                 return p.originals[0].trim();
-              }), from, to, doc, getString("apiKey", ""), timeout, done);
+              }), done);
             }
           } catch (e) {
             // E.g. a missing XPCOM network service or a provider bootstrap
@@ -493,10 +524,10 @@ var TWPUXPPageController = (function () {
   function cancelCurrentPage() {
     var doc = getDoc(); if (!doc) return;
     var state = getState(doc);
-    if (!state.running) { status(doc,"No translation running",false); return; }
+    if (!state.running) { status(doc,L("page.noneRunning", "No translation running"),false); return; }
     state.serial++; state.running = false;
     stopDynamic(state);
-    status(doc,"Translation cancelled (already translated text preserved)",false);
+    status(doc,L("page.cancelled", "Translation cancelled (already translated text preserved)"),false);
   }
   function configureOriginalHover(enabled) {
     // Can be toggled immediately for the active translated page in the
@@ -515,7 +546,7 @@ var TWPUXPPageController = (function () {
     var nextValue = !getBool("useTwpParagraphEngine", true);
     prefs.setBoolPref(P + "useTwpParagraphEngine", nextValue);
     var doc = getDoc();
-    if (doc) status(doc, "Engine: " + (nextValue ? "TWP paragraph grouping" : "classic single-node fallback"), false);
+    if (doc) status(doc, L("page.engine", "Engine: {0}", [nextValue ? L("page.engineTwp", "TWP paragraph grouping") : L("page.engineClassic", "classic single-node fallback")]), false);
   }
   return {collectDocuments: collectDocuments, startDynamic: startDynamic,
     stopDynamic: stopDynamic, translateCurrentPage: translateCurrentPage,

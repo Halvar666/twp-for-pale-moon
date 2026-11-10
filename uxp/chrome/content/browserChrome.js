@@ -6,6 +6,14 @@
 var TWPUXPBrowserChrome = (function () {
   "use strict";
   function create(context, page, selection) {
+  function L(key, fallback, args) {
+    return typeof TWPUXPL10n !== "undefined" ?
+      TWPUXPL10n.get(key, fallback, args) :
+      (args ? args.reduce(function(s, item, i) {
+        return s.split("{" + i + "}").join(String(item));
+      }, fallback) : fallback);
+  }
+
   var BUTTON_ID = "twpuxp-page-button", MENU_ID = "twpuxp-context-menu";
   var P = context.P, prefs = context.prefs;
   var getDoc = context.getDoc, getState = context.getState;
@@ -117,7 +125,7 @@ var TWPUXPBrowserChrome = (function () {
     if (!contextMenu || document.getElementById("twpuxp-context-translate-selected")) return;
     var item = document.createElement("menuitem");
     item.id = "twpuxp-context-translate-selected";
-    item.setAttribute("label", "Translate selected text (TWP)");
+    item.setAttribute("label", L("browser.selectionMenu", "Translate selected text (TWP)"));
     item.setAttribute("hidden", "true");
     item.addEventListener("command", function() {
       var selection = lastContextSelection;
@@ -132,7 +140,7 @@ var TWPUXPBrowserChrome = (function () {
     var submenu = document.createElement("menupopup");
     var translateItem = document.createElement("menuitem");
     translateItem.id = "twpuxp-context-translate-page";
-    translateItem.setAttribute("label", "Translate page");
+    translateItem.setAttribute("label", L("browser.translatePage", "Translate page"));
     translateItem.addEventListener("command", function() { translateCurrentPage(); }, false);
     submenu.appendChild(translateItem);
     var alwaysItem = document.createElement("menuitem");
@@ -145,7 +153,7 @@ var TWPUXPBrowserChrome = (function () {
     submenu.appendChild(alwaysItem);
     var forgetItem = document.createElement("menuitem");
     forgetItem.id = "twpuxp-context-forget-site";
-    forgetItem.setAttribute("tooltiptext", "Remove saved site translation rules and restore original text; the translation cache is unchanged.");
+    forgetItem.setAttribute("tooltiptext", L("browser.forgetTip", "Remove saved site translation rules and restore original text; the translation cache is unchanged."));
     forgetItem.addEventListener("command", function() {
       var info = getPageInfo();
       if (info.supported && info.host) forgetSiteTranslation(info.host);
@@ -153,7 +161,7 @@ var TWPUXPBrowserChrome = (function () {
     submenu.appendChild(forgetItem);
     var restoreItem = document.createElement("menuitem");
     restoreItem.id = "twpuxp-context-restore-page";
-    restoreItem.setAttribute("label", "Restore original page");
+    restoreItem.setAttribute("label", L("browser.restorePage", "Restore original page"));
     restoreItem.addEventListener("command", restoreCurrentPage, false);
     submenu.appendChild(restoreItem);
     siteMenu.appendChild(submenu);
@@ -168,9 +176,9 @@ var TWPUXPBrowserChrome = (function () {
       if (!info.supported || !info.host) return;
       var auto = exactHostRule("autoTranslateSites", info.host);
       var blocked = exactHostRule("neverTranslateSites", info.host);
-      alwaysItem.setAttribute("label", "Always translate " + info.host);
+      alwaysItem.setAttribute("label", L("browser.alwaysHost", "Always translate {0}", [info.host]));
       alwaysItem.setAttribute("checked", auto ? "true" : "false");
-      forgetItem.setAttribute("label", "Forget translation for " + info.host);
+      forgetItem.setAttribute("label", L("browser.forgetHost", "Forget translation for {0}", [info.host]));
       forgetItem.disabled = !auto && !blocked && !info.running && !info.translated;
       restoreItem.disabled = !info.running && !info.translated;
       translateItem.disabled = info.running;
@@ -192,20 +200,20 @@ var TWPUXPBrowserChrome = (function () {
     var host = document.getElementById("mainPopupSet") || document.getElementsByTagName("popupset")[0];
     if (!host) { host = document.createElement("popupset"); document.documentElement.appendChild(host); }
     popup = document.createElement("menupopup"); popup.id = MENU_ID;
-    appendMenuItem(popup, "Translate page (preferred languages)", function () { translateCurrentPage(); });
-    appendMenuItem(popup, "Auto-detect language → Czech", function () { translateCurrentPage("auto", "cs"); });
-    appendMenuItem(popup, "Translate English → Czech", function () { translateCurrentPage("en", "cs"); });
-    appendMenuItem(popup, "Translate Czech → English", function () { translateCurrentPage("cs", "en"); });
-    appendMenuItem(popup, "Translate selected text…", translateSelectedText);
-    appendMenuItem(popup, "Restore original page", restoreCurrentPage);
-    appendMenuItem(popup, "Cancel translation", cancelCurrentPage);
+    appendMenuItem(popup, L("browser.pagePreferred", "Translate page (preferred languages)"), function () { translateCurrentPage(); });
+    appendMenuItem(popup, L("browser.autoCzech", "Auto-detect language → Czech"), function () { translateCurrentPage("auto", "cs"); });
+    appendMenuItem(popup, L("browser.enCzech", "Translate English → Czech"), function () { translateCurrentPage("en", "cs"); });
+    appendMenuItem(popup, L("browser.czechEn", "Translate Czech → English"), function () { translateCurrentPage("cs", "en"); });
+    appendMenuItem(popup, L("browser.selectedMenu", "Translate selected text…"), translateSelectedText);
+    appendMenuItem(popup, L("browser.restorePage", "Restore original page"), restoreCurrentPage);
+    appendMenuItem(popup, L("browser.cancel", "Cancel translation"), cancelCurrentPage);
     var sepService = document.createElement("menuseparator"); popup.appendChild(sepService);
     var providerMenu = document.createElement("menu");
-    providerMenu.setAttribute("label", "Translation service");
+    providerMenu.setAttribute("label", L("browser.service", "Translation service"));
     var providerPopup = document.createElement("menupopup");
     var providerItems = {};
-    [['google', 'Google Translate'], ['bing', 'Bing Translator'],
-     ['deepl', 'DeepL (experimental, unofficial)']]
+    [['google', L("browser.google", "Google Translate")], ['bing', L("browser.bing", "Bing Translator")],
+     ['deepl', L("browser.deepl", "DeepL (experimental, unofficial)")]]
       .forEach(function(entry) {
         var item = document.createElement('menuitem');
         item.setAttribute('label', entry[1]);
@@ -227,10 +235,10 @@ var TWPUXPBrowserChrome = (function () {
     providerMenu.appendChild(providerPopup);
     popup.appendChild(providerMenu);
     var sepEngine = document.createElement("menuseparator"); popup.appendChild(sepEngine);
-    appendMenuItem(popup, "Switch TWP / classic DOM engine", toggleEngine);
+    appendMenuItem(popup, L("browser.toggleEngine", "Switch TWP / classic DOM engine"), toggleEngine);
     var dynamicItem = document.createElement("menuitem");
     dynamicItem.setAttribute("type", "checkbox");
-    dynamicItem.setAttribute("label", "Translate dynamically loaded content");
+    dynamicItem.setAttribute("label", L("browser.dynamic", "Translate dynamically loaded content"));
     dynamicItem.setAttribute("checked", getBool("translateDynamicContent", true) ? "true" : "false");
     dynamicItem.addEventListener("command", function () {
       var enabled = !getBool("translateDynamicContent", true);
@@ -242,24 +250,25 @@ var TWPUXPBrowserChrome = (function () {
         if (enabled && currentState.source && currentState.originals.length && !currentState.observer)
           startDynamic(page, currentState);
         if (!enabled) stopDynamic(currentState);
-        status(page, "Dynamic translation " + (enabled ? "enabled" : "disabled"), false);
+        status(page, (enabled ? L("browser.dynamicOn", "Dynamic translation enabled") : L("browser.dynamicOff", "Dynamic translation disabled")), false);
       }
     }, false);
     popup.appendChild(dynamicItem);
     var sep = document.createElement("menuseparator"); popup.appendChild(sep);
-    appendMenuItem(popup, "Translation preferences…", openOptions);
-    appendMenuItem(popup, "About TWP for Pale Moon", showAbout);
+    appendMenuItem(popup, L("browser.preferences", "Translation preferences…"), openOptions);
+    appendMenuItem(popup, L("browser.about", "About TWP for Pale Moon"), showAbout);
 
     host.appendChild(popup);
   }
   // Read the installed version from add-on metadata rather than maintaining a
   // hard-coded version string in the About dialog (previously stuck on a22).
   function showAbout() {
-    var details = "Unofficial native UXP port of TWP – Translate Web Pages.\n" +
+    var details = L("browser.aboutInfo",
+      "Unofficial native UXP port of TWP – Translate Web Pages.\n" +
       "Google Translate, Bing Translator and optional experimental DeepL.\n" +
       "Provider endpoints are unofficial and may change.\n" +
       "Source license: MPL 2.0.\n" +
-      "Original project: FilipePS / Traduzir-paginas-web.";
+      "Original project: FilipePS / Traduzir-paginas-web.");
     function display(version) {
       window.alert("TWP for Pale Moon" + (version ? " " + version : "") +
         "\n\n" + details);

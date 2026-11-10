@@ -3,3 +3,18 @@ skin twpuxp classic/1.0 chrome/skin/
 overlay chrome://browser/content/browser.xul chrome://twpuxp/content/browserOverlay.xul
 style chrome://browser/content/browser.xul chrome://twpuxp/skin/toolbarButton.css
 style chrome://global/content/customizeToolbar.xul chrome://twpuxp/skin/toolbarButton.css
+locale twpuxp en-US chrome/locale/en-US/
+locale twpuxp cs chrome/locale/cs-CZ/
+locale twpuxp cs-CZ chrome/locale/cs-CZ/
+locale twpuxp de chrome/locale/de-DE/
+locale twpuxp de-DE chrome/locale/de-DE/
+locale twpuxp fr chrome/locale/fr-FR/
+locale twpuxp fr-FR chrome/locale/fr-FR/
+locale twpuxp es chrome/locale/es-ES/
+locale twpuxp es-ES chrome/locale/es-ES/
+locale twpuxp pl chrome/locale/pl-PL/
+locale twpuxp pl-PL chrome/locale/pl-PL/
+locale twpuxp sk chrome/locale/sk-SK/
+locale twpuxp sk-SK chrome/locale/sk-SK/
+locale twpuxp it chrome/locale/it-IT/
+locale twpuxp it-IT chrome/locale/it-IT/

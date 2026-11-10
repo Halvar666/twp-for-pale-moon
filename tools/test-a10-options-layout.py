@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import pathlib
 import xml.etree.ElementTree as ET
+from xul_locale import parse_localized_xul
 root = pathlib.Path(__file__).resolve().parents[1]
 ns = {'x': 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'}
-tree = ET.parse(root / 'uxp/chrome/content/options.xul')
+tree = ET.ElementTree(parse_localized_xul(root / 'uxp/chrome/content/options.xul'))
 w = tree.getroot()
 assert int(w.attrib['height']) >= 630
 scroll=w.find('.//x:scrollbox',ns)

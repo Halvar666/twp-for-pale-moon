@@ -1,0 +1,111 @@
+<!-- TWP for Pale Moon: UI strings, MPL-2.0 -->
+<!ENTITY options.001 "TWP for Pale Moon – Einstellungen">
+<!ENTITY options.002 "TWP for Pale Moon">
+<!ENTITY options.003 "Einstellungen der nativen UXP-Übersetzung">
+<!ENTITY options.004 "Standardsprachen für Übersetzungen">
+<!ENTITY options.005 "Ausgangssprache">
+<!ENTITY options.006 "Zielsprache">
+<!ENTITY options.007 "Sprachen vertauschen">
+<!ENTITY options.008 "Die Schaltfläche in der Symbolleiste übersetzt die aktuelle Seite mit diesen Sprachen.">
+<!ENTITY options.009 "Übersetzungsdienst">
+<!ENTITY options.010 "Google Translate (Standard)">
+<!ENTITY options.011 "Bing Translator">
+<!ENTITY options.012 "DeepL (experimentell, inoffiziell)">
+<!ENTITY options.013 "Der Dienst gilt für ganze Seiten und markierten Text. Alle drei Dienste nutzen inoffizielle Schnittstellen; die Verfügbarkeit von DeepL kann sich ändern.">
+<!ENTITY options.014 "Datenschutz und Netzwerkanfragen">
+<!ENTITY options.015 "Datenschutzoptimierte Übersetzungsanfragen (empfohlen)">
+<!ENTITY options.016 "Verwendet HTTPS und geschützte XPCOM-Anfragen für Google, Bing und DeepL, einschließlich des Google-Tokens. Cookies und gespeicherte Anmeldedaten werden unterdrückt und der Referer entfernt. Ist der Schutz nicht möglich, wird die Anfrage blockiert. Dies schützt die Privatsphäre, garantiert aber keine Anonymität.">
+<!ENTITY options.017 "Der Dienst erhält weiterhin den Text und Ihre Netzwerk-IP-Adresse (oder VPN-/Proxy-IP). Die Entfernung aller Netzwerkmerkmale oder des Origin-Headers ist nicht garantiert. Authentifizierte HTTP-Proxys können das Abschalten dieser Option erfordern.">
+<!ENTITY options.018 "Regeln für automatische Übersetzung">
+<!ENTITY options.019 "Seiten oder Sprachen automatisch übersetzen, wenn Regeln zutreffen">
+<!ENTITY options.020 "Regeln gelten beim Öffnen einer Webseite oder beim Wechseln des Tabs. Manuelle Übersetzung ist immer möglich.">
+<!ENTITY options.021 "Diese Websites immer übersetzen (ein Hostname pro Zeile)">
+<!ENTITY options.022 "Diese Websites niemals automatisch übersetzen (hat Vorrang)">
+<!ENTITY options.023 "Diese Seitensprachen immer übersetzen (Codes, z. B. en, de, sk)">
+<!ENTITY options.024 "Diese Seitensprachen niemals automatisch übersetzen (z. B. en, de)">
+<!ENTITY options.025 "Domainregeln gelten auch für Subdomains. Sprachregeln benötigen die deklarierte Seitensprache (html lang oder Metadaten). Ausschlussregeln haben Vorrang. Manuelle Übersetzung bleibt möglich.">
+<!ENTITY options.026 "Lokaler Übersetzungsspeicher">
+<!ENTITY options.027 "Übersetzungen im Pale-Moon-Profil speichern (optional)">
+<!ENTITY options.028 "Kann Texte besuchter Websites einschließlich persönlicher Inhalte speichern. Standardmäßig deaktiviert und nie in privaten Fenstern verwendet. Deaktivieren löscht bereits gespeicherte Einträge nicht.">
+<!ENTITY options.029 "Gespeicherte Übersetzungen löschen">
+<!ENTITY options.030 "Sichern und Wiederherstellen">
+<!ENTITY options.031 "Exportiert gespeicherte Einstellungen, Sprachen, Seitenregeln und Tastenkürzel in eine JSON-Datei. Übersetzungscache und Schaltflächenposition werden nicht gesichert. Speichern Sie ungesicherte Änderungen vor dem Export.">
+<!ENTITY options.032 "API-Schlüssel in die Sicherung aufnehmen (vertraulich; standardmäßig aus)">
+<!ENTITY options.033 "Einstellungen exportieren…">
+<!ENTITY options.034 "Einstellungen importieren…">
+<!ENTITY options.035 "Tastenkombinationen">
+<!ENTITY options.036 "TWP-Tastenkombinationen aktivieren">
+<!ENTITY options.037 "Seite übersetzen / wiederherstellen">
+<!ENTITY options.038 "Klicken und Tastenkombination drücken; Esc bricht ab, Entf löscht">
+<!ENTITY options.039 "Löschen">
+<!ENTITY options.040 "Standard">
+<!ENTITY options.041 "Auswahl übersetzen">
+<!ENTITY options.042 "Klicken und Tastenkombination drücken; Esc bricht ab, Entf löscht">
+<!ENTITY options.043 "Löschen">
+<!ENTITY options.044 "Standard">
+<!ENTITY options.045 "Original wiederherstellen">
+<!ENTITY options.046 "Klicken und Tastenkombination drücken; Esc bricht ab, Entf löscht">
+<!ENTITY options.047 "Löschen">
+<!ENTITY options.048 "Standard">
+<!ENTITY options.049 "Klicken Sie in das Kürzelfeld und drücken Sie die Tastenkombination. Esc bricht ab, Entf oder Löschen deaktiviert die Aktion. Standard stellt die ursprüngliche Kombination wieder her. Speichern Sie mit „Einstellungen speichern“.">
+<!ENTITY options.050 "System- und Browserkürzel können Vorrang haben (z. B. KDE Ctrl+Alt+T). Diese Konflikte werden nicht automatisch erkannt.">
+<!ENTITY options.051 "Seitenübersetzung">
+<!ENTITY options.052 "Dynamisch geladene Inhalte übersetzen">
+<!ENTITY options.053 "HTML-Beschriftungen und Attribute übersetzen (alt, title, placeholder, aria-label)">
+<!ENTITY options.054 "Zugängliche Frames gleicher Herkunft übersetzen (iframe)">
+<!ENTITY options.055 "Text nach Absätzen gruppieren (TWP-Engine)">
+<!ENTITY options.056 "Fortschrittsmeldungen auf der Seite anzeigen">
+<!ENTITY options.057 "Standardmäßig aus. Der Fortschritt bleibt im Symbolleisten-Popup sichtbar; wichtige Fehler erscheinen immer auf der Seite.">
+<!ENTITY options.058 "Originaltext nach Übersetzung beim Darüberfahren anzeigen">
+<!ENTITY options.059 "Der Originaltext erscheint als kleiner Tooltip, ohne die übersetzte Seite zu verändern. Auch im Popup verfügbar.">
+<!ENTITY options.060 "Parallele Anfragen (1–6)">
+<!ENTITY options.061 "Gruppen pro Anfrage (1–20)">
+<!ENTITY options.062 "Limit für Textknoten (0 = unbegrenzt)">
+<!ENTITY options.063 "DeepL ist experimentell und kann weitere Protokollanpassungen benötigen. Yandex ist noch nicht implementiert.">
+<!ENTITY options.064 "Abbrechen">
+<!ENTITY options.065 "Einstellungen speichern">
+<!ENTITY browser.001 "Webseiten übersetzen">
+<!ENTITY browser.002 "Original">
+<!ENTITY browser.003 "Original">
+<!ENTITY browser.004 "Seite übersetzen">
+<!ENTITY browser.005 "Abbrechen">
+<!ENTITY browser.006 "Übersetzungssprachen">
+<!ENTITY browser.007 "⇄">
+<!ENTITY browser.008 "Sprachen vertauschen">
+<!ENTITY browser.009 "Übersetzungsdienst">
+<!ENTITY browser.010 "Google Translate">
+<!ENTITY browser.011 "Bing Translator">
+<!ENTITY browser.012 "DeepL (experimentell)">
+<!ENTITY browser.013 "Aktuelle Website">
+<!ENTITY browser.014 "Diese Website immer übersetzen">
+<!ENTITY browser.015 "Diese Website niemals automatisch übersetzen">
+<!ENTITY browser.016 "Diese Sprache immer übersetzen">
+<!ENTITY browser.017 "Diese Sprache niemals automatisch übersetzen">
+<!ENTITY browser.018 "Originaltext beim Darüberfahren anzeigen">
+<!ENTITY browser.019 "Auswahl übersetzen…">
+<!ENTITY browser.020 "Einstellungen…">
+<!ENTITY browser.021 "Sprache wählen und diese Seite übersetzen.">
+<!ENTITY browser.022 "TWP for Pale Moon">
+<!ENTITY browser.023 "TWP for Pale Moon – Linksklick: Übersetzungsfenster; Strg+Klick: Seite übersetzen; Rechtsklick: Menü">
+<!ENTITY selection.001 "TWP – Markierten Text übersetzen">
+<!ENTITY selection.002 "TWP – Markierten Text übersetzen">
+<!ENTITY selection.003 "Von">
+<!ENTITY selection.004 "Vertauschen">
+<!ENTITY selection.005 "Übersetzungssprachen vertauschen">
+<!ENTITY selection.006 "Nach">
+<!ENTITY selection.007 "Übersetzen">
+<!ENTITY selection.008 "Dienst">
+<!ENTITY selection.009 "Google Translate">
+<!ENTITY selection.010 "Bing Translator">
+<!ENTITY selection.011 "DeepL (experimentell, inoffiziell)">
+<!ENTITY selection.012 "Originaltext">
+<!ENTITY selection.013 "Übersetzung">
+<!ENTITY selection.014 "Wird übersetzt…">
+<!ENTITY selection.015 "Übersetzung kopieren">
+<!ENTITY selection.016 "Schließen">
+<!ENTITY options.066 "Bevorzugte Zielsprachen">
+<!ENTITY options.067 "Optional: Wählen Sie bis zu drei unterschiedliche Zielsprachen. Im Übersetzungsfenster können Sie schnell zwischen ihnen wechseln. Nicht unterstützte Sprachen werden ausgeblendet.">
+<!ENTITY browser.024 "Bevorzugte Zielsprachen">
+<!ENTITY options.068 "Benutzerwörterbuch">
+<!ENTITY options.069 "Eine Regel pro Zeile: Ausgangstext =&gt; Ersetzung. Eine leere Ersetzung schützt den Originalbegriff. Groß-/Kleinschreibung wird beachtet.">
+<!ENTITY options.070 "Gilt für Seiten und markierten Text. Der übrige Text wird getrennt übersetzt; Wörterbucheinträge werden nicht übertragen. Maximal 100 Regeln.">

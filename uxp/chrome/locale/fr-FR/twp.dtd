@@ -1,0 +1,111 @@
+<!-- TWP for Pale Moon: UI strings, MPL-2.0 -->
+<!ENTITY options.001 "TWP for Pale Moon – Préférences">
+<!ENTITY options.002 "TWP for Pale Moon">
+<!ENTITY options.003 "Paramètres de traduction UXP native">
+<!ENTITY options.004 "Langues de traduction par défaut">
+<!ENTITY options.005 "Langue source">
+<!ENTITY options.006 "Langue cible">
+<!ENTITY options.007 "Inverser les langues">
+<!ENTITY options.008 "Le bouton de la barre d’outils traduit la page actuelle avec ces langues.">
+<!ENTITY options.009 "Service de traduction">
+<!ENTITY options.010 "Google Traduction (par défaut)">
+<!ENTITY options.011 "Bing Translator">
+<!ENTITY options.012 "DeepL (expérimental, non officiel)">
+<!ENTITY options.013 "Le service s’applique aux pages et au texte sélectionné. Les trois services utilisent des interfaces non officielles ; la disponibilité de DeepL peut changer.">
+<!ENTITY options.014 "Confidentialité et requêtes réseau">
+<!ENTITY options.015 "Requêtes de traduction avec protection renforcée (recommandé)">
+<!ENTITY options.016 "Utilise HTTPS et des requêtes XPCOM protégées pour Google, Bing et DeepL, y compris la récupération du jeton Google. Les cookies et identifiants enregistrés sont supprimés des requêtes et le référent est effacé. Si la protection échoue, la requête est bloquée. Cela protège la confidentialité, sans garantir l’anonymat.">
+<!ENTITY options.017 "Le service choisi reçoit toujours le texte et votre adresse IP (ou celle du VPN/proxy). La suppression de toute empreinte réseau ou de l’en-tête Origin n’est pas garantie. Les proxys HTTP authentifiés peuvent nécessiter la désactivation de cette option.">
+<!ENTITY options.018 "Règles de traduction automatique">
+<!ENTITY options.019 "Activer la traduction automatique pour les sites ou langues concernés">
+<!ENTITY options.020 "Les règles s’appliquent à l’ouverture d’une page ou lors d’un changement d’onglet. La traduction manuelle reste disponible.">
+<!ENTITY options.021 "Toujours traduire ces sites (un domaine par ligne)">
+<!ENTITY options.022 "Ne jamais traduire automatiquement ces sites (prioritaire)">
+<!ENTITY options.023 "Toujours traduire ces langues de page (codes, p. ex. en, de, sk)">
+<!ENTITY options.024 "Ne jamais traduire automatiquement ces langues (p. ex. en, de)">
+<!ENTITY options.025 "Les règles de domaine s’appliquent aux sous-domaines. Les règles de langue exigent une langue déclarée (html lang ou métadonnées). Les exclusions sont prioritaires. La traduction manuelle reste possible.">
+<!ENTITY options.026 "Cache locale des traductions">
+<!ENTITY options.027 "Enregistrer les traductions dans mon profil Pale Moon (facultatif)">
+<!ENTITY options.028 "Peut enregistrer du texte des sites visités, y compris des données personnelles. Désactivé par défaut et jamais utilisé dans les fenêtres privées. Désactiver ne supprime pas les entrées existantes.">
+<!ENTITY options.029 "Effacer les traductions enregistrées">
+<!ENTITY options.030 "Sauvegarde et restauration">
+<!ENTITY options.031 "Exporte les préférences enregistrées, les langues, les règles de site et les raccourcis vers un fichier JSON. Le cache et la position du bouton ne sont pas inclus. Enregistrez les changements avant l’export.">
+<!ENTITY options.032 "Inclure la clé API dans la sauvegarde (confidentiel ; désactivé par défaut)">
+<!ENTITY options.033 "Exporter les paramètres…">
+<!ENTITY options.034 "Importer les paramètres…">
+<!ENTITY options.035 "Raccourcis clavier">
+<!ENTITY options.036 "Activer les raccourcis TWP">
+<!ENTITY options.037 "Traduire / restaurer la page">
+<!ENTITY options.038 "Cliquer et appuyer sur des touches ; Échap annule, Suppr efface">
+<!ENTITY options.039 "Effacer">
+<!ENTITY options.040 "Par défaut">
+<!ENTITY options.041 "Traduire la sélection">
+<!ENTITY options.042 "Cliquer et appuyer sur des touches ; Échap annule, Suppr efface">
+<!ENTITY options.043 "Effacer">
+<!ENTITY options.044 "Par défaut">
+<!ENTITY options.045 "Restaurer l’original">
+<!ENTITY options.046 "Cliquer et appuyer sur des touches ; Échap annule, Suppr efface">
+<!ENTITY options.047 "Effacer">
+<!ENTITY options.048 "Par défaut">
+<!ENTITY options.049 "Cliquez dans le champ de raccourci et tapez la combinaison. Échap annule, Suppr ou Effacer désactive l’action. Par défaut rétablit le raccourci initial. Enregistrez avec « Enregistrer les préférences ».">
+<!ENTITY options.050 "Les raccourcis système et du navigateur peuvent être prioritaires (p. ex. KDE Ctrl+Alt+T). Ces conflits ne sont pas détectés automatiquement.">
+<!ENTITY options.051 "Traduction des pages">
+<!ENTITY options.052 "Traduire le contenu chargé dynamiquement">
+<!ENTITY options.053 "Traduire les libellés et attributs HTML (alt, title, placeholder, aria-label)">
+<!ENTITY options.054 "Traduire les cadres accessibles de même origine (iframe)">
+<!ENTITY options.055 "Regrouper le texte par paragraphes (moteur TWP)">
+<!ENTITY options.056 "Afficher les notifications de progression sur la page">
+<!ENTITY options.057 "Désactivé par défaut. La progression reste visible dans le panneau de traduction ; les erreurs importantes s’affichent sur la page.">
+<!ENTITY options.058 "Afficher le texte d’origine au survol après traduction">
+<!ENTITY options.059 "Le texte d’origine apparaît dans une info-bulle sans modifier la page traduite. Également accessible dans le panneau.">
+<!ENTITY options.060 "Requêtes parallèles (1–6)">
+<!ENTITY options.061 "Groupes par requête (1–20)">
+<!ENTITY options.062 "Limite de nœuds de texte (0 = illimité)">
+<!ENTITY options.063 "DeepL est expérimental et peut nécessiter des mises à jour du protocole. Yandex n’est pas encore disponible.">
+<!ENTITY options.064 "Annuler">
+<!ENTITY options.065 "Enregistrer les préférences">
+<!ENTITY browser.001 "Traduction de pages Web">
+<!ENTITY browser.002 "Original">
+<!ENTITY browser.003 "Original">
+<!ENTITY browser.004 "Traduire la page">
+<!ENTITY browser.005 "Annuler">
+<!ENTITY browser.006 "Langues de traduction">
+<!ENTITY browser.007 "⇄">
+<!ENTITY browser.008 "Inverser les langues">
+<!ENTITY browser.009 "Service de traduction">
+<!ENTITY browser.010 "Google Translate">
+<!ENTITY browser.011 "Bing Translator">
+<!ENTITY browser.012 "DeepL (expérimental)">
+<!ENTITY browser.013 "Site actuel">
+<!ENTITY browser.014 "Toujours traduire ce site">
+<!ENTITY browser.015 "Ne jamais traduire automatiquement ce site">
+<!ENTITY browser.016 "Toujours traduire cette langue">
+<!ENTITY browser.017 "Ne jamais traduire automatiquement cette langue">
+<!ENTITY browser.018 "Afficher l’original au survol">
+<!ENTITY browser.019 "Traduire la sélection…">
+<!ENTITY browser.020 "Préférences…">
+<!ENTITY browser.021 "Sélectionnez une langue et traduisez cette page.">
+<!ENTITY browser.022 "TWP for Pale Moon">
+<!ENTITY browser.023 "TWP for Pale Moon – clic gauche : panneau de traduction ; Ctrl+clic : traduire ; clic droit : menu">
+<!ENTITY selection.001 "TWP – Traduire le texte sélectionné">
+<!ENTITY selection.002 "TWP – Traduire le texte sélectionné">
+<!ENTITY selection.003 "De">
+<!ENTITY selection.004 "Inverser">
+<!ENTITY selection.005 "Inverser les langues de traduction">
+<!ENTITY selection.006 "Vers">
+<!ENTITY selection.007 "Traduire">
+<!ENTITY selection.008 "Service">
+<!ENTITY selection.009 "Google Translate">
+<!ENTITY selection.010 "Bing Translator">
+<!ENTITY selection.011 "DeepL (expérimental, non officiel)">
+<!ENTITY selection.012 "Texte original">
+<!ENTITY selection.013 "Traduction">
+<!ENTITY selection.014 "Traduction en cours…">
+<!ENTITY selection.015 "Copier la traduction">
+<!ENTITY selection.016 "Fermer">
+<!ENTITY options.066 "Langues cibles favorites">
+<!ENTITY options.067 "Facultatif : choisissez jusqu’à trois langues cibles différentes. Le panneau de traduction permet de les sélectionner rapidement. Les langues non prises en charge sont masquées.">
+<!ENTITY browser.024 "Langues cibles favorites">
+<!ENTITY options.068 "Dictionnaire personnel">
+<!ENTITY options.069 "Une règle par ligne : terme source =&gt; remplacement. Laissez le remplacement vide pour conserver le terme d’origine. La casse est respectée.">
+<!ENTITY options.070 "S’applique aux pages et aux textes sélectionnés. Le texte autour est traduit séparément ; les termes du dictionnaire ne sont pas envoyés. 100 règles maximum.">

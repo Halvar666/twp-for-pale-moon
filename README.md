@@ -2,9 +2,11 @@
 
 **Unofficial native UXP port** of [TWP — Translate Web Pages](https://github.com/FilipePS/Traduzir-paginas-web) for the **Pale Moon** web browser.
 
-**Current release candidate: 1.0.0b2 (beta)** · Primary browser: Pale Moon 35 · **MPL 2.0**
+**Current beta: 1.0.0b3** · Primary browser: Pale Moon 35 · **MPL 2.0**
 
 This project is a community port and is **not affiliated with or endorsed by** the original TWP developer.
+
+> **1.0.0b3 — Third public beta:** Adds JSON settings backup/restore, eight UI languages, favorite targets, a custom dictionary, and improved translation-service error handling. The final a7 stabilization changed no translation logic.
 
 ## Features
 
@@ -18,10 +20,13 @@ This project is a community port and is **not affiliated with or endorsed by** t
 - Improved multiline selection and Markdown/README change-history translation with preserved line breaks and blank lines.
 - Page context submenu: translate, always translate the current site, forget that site’s translation preference, restore original.
 - Basic Basilisk 52.9.x compatibility (toolbar-placement preservation verified by the maintainer).
+- Native XUL UI localization in eight languages (English, Czech, German, French, Spanish, Polish, Slovak, Italian).
+- Up to three favorite target languages in the translation popup.
+- Optional custom dictionary for exact terms and replacements, included in JSON settings backup.
 
 ## Installation
 
-Install `TWP-for-Pale-Moon-UXP-1.0.0b2.xpi` from GitHub Releases once published, or install the locally supplied beta XPI through the browser Add-ons Manager. Upgrading from `1.0.0b1` or the `1.0.0b2a*` tests retains the add-on ID and preferences. The manifest declares Pale Moon **33.0–35.*** and Basilisk **52.9.0–52.9.***. The Basilisk compatibility target uses the historical Firefox application ID; it does **not** imply compatibility with Firefox or full regression coverage in Basilisk. Pale Moon remains the primary target.
+Install `TWP-for-Pale-Moon-UXP-1.0.0b3.xpi` from the GitHub Release once published, or install the XPI through the browser Add-ons Manager. Upgrading from the b1/b2 releases or b3 test builds retains the add-on ID and saved preferences. The manifest declares Pale Moon **33.0–35.*** and Basilisk **52.9.0–52.9.***. The Basilisk compatibility target uses the historical Firefox application ID; it does **not** imply compatibility with Firefox or full regression coverage in Basilisk. Pale Moon remains the primary target.
 
 ## Build and test
 
@@ -46,4 +51,4 @@ The blue project-specific translation icon was generated using ChatGPT, revised 
 
 This repository includes the original upstream source for reference and license compliance. The upstream project's own README has been moved to [`upstream/README-original-TWP.md`](upstream/README-original-TWP.md) to avoid confusion with the port.
 
-> **1.0.0b2 beta:** Improves formatting preservation and language auto-detection; adds page context actions, adjusts experimental DeepL pacing, and retains basic Basilisk compatibility. The maintainer verified Basilisk toolbar placement across restarts. Full feature compatibility in Basilisk has not been established. See [b2 release notes](docs/RELEASE-NOTES-1.0.0b2.md).
+> **Previous release:** [1.0.0b2 notes](docs/RELEASE-NOTES-1.0.0b2.md). See [1.0.0b3 notes](docs/RELEASE-NOTES-1.0.0b3.md) for this beta.

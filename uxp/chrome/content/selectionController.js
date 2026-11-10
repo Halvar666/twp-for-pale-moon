@@ -51,6 +51,8 @@ var TWPUXPSelectionController = (function () {
     var fragments = layout.fragments;
     var key = getString("apiKey", "");
     var timeout = Math.max(3000, getInt("timeoutMs", 20000));
+    var dictionaryEntries = typeof TWPUXPCustomDictionary === "undefined" ? [] :
+      TWPUXPCustomDictionary.read(getString("customDictionary", ""));
     var selectedService = getString('translationService','google');
     if (!TWPUXPProviders.has(selectedService)) selectedService = 'google';
     var originDoc = selection.doc;
@@ -118,9 +120,12 @@ var TWPUXPSelectionController = (function () {
             nextIndex += batch.length;
             busy++;
             (function(index, batchData) {
-              TWPUXPCache.translateMany(provider, chosenService, batchData, requestSource,
-                chosenTarget, originDoc, key, timeout,
-                function(error, translated) {
+              (typeof TWPUXPCustomDictionary === "undefined" || !dictionaryEntries.length ?
+                function(callback) { TWPUXPCache.translateMany(provider, chosenService,
+                  batchData, requestSource, chosenTarget, originDoc, key, timeout, callback); } :
+                function(callback) { TWPUXPCustomDictionary.translateTextBatch(TWPUXPCache, provider,
+                  chosenService, batchData, requestSource, chosenTarget, originDoc,
+                  key, timeout, dictionaryEntries, callback); })(function(error, translated) {
                   if (stopped) return;
                   busy--;
                   if (error || !translated || translated.length !== batchData.length) {

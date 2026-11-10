@@ -14,8 +14,27 @@ var TWPGoogleProvider = (function () {
   var keyCache = "";
   var keyCacheTime = 0;
   var keyWaiters = null; // Only one token lookup for all parallel batches.
+  var cooldownUntil = 0;
+  function retryAfterMs(value) {
+    if (!value) return 0;
+    var raw = String(value).trim();
+    if (/^\d+(?:\.\d+)?$/.test(raw))
+      return Math.max(0, Math.round(Number(raw) * 1000));
+    var date = Date.parse(raw);
+    return isNaN(date) ? 0 : Math.max(0, date - Date.now());
+  }
+  function rateLimited(wait) {
+    var err = new Error("Google endpoint HTTP 429 (rate limit)");
+    err.httpStatus = 429;
+    err.rateLimited = true;
+    err.retryable = false;
+    err.retryAfterMs = Math.max(0, wait);
+    return err;
+  }
 
   function xhr(method, url, headers, body, timeoutMs, cb) {
+    var remaining = cooldownUntil - Date.now();
+    if (remaining > 0) { cb(rateLimited(remaining)); return; }
     var req;
     try { req = TWPUXPPrivacyXHR.create(method, url); }
     catch (privacyError) { cb(privacyError); return; }
@@ -35,6 +54,17 @@ var TWPGoogleProvider = (function () {
         serverError.retryable = (req.status === 408 || req.status === 429 ||
           req.status === 500 || req.status === 502 ||
           req.status === 503 || req.status === 504);
+        if (req.status === 429) {
+          var after = 0;
+          try { after = retryAfterMs(req.getResponseHeader("Retry-After")); }
+          catch (ignore) { /* Header not exposed by this build. */ }
+          if (after > 0) {
+            cooldownUntil = Math.max(cooldownUntil, Date.now() + after);
+            finish(rateLimited(cooldownUntil - Date.now()));
+            return;
+          }
+          serverError.rateLimited = true;
+        }
         finish(serverError);
       } else { finish(null, req.responseText); }
     };
@@ -68,7 +98,16 @@ var TWPGoogleProvider = (function () {
             setTimeout(send, wait);
             return;
           }
-          if (error) error.attempts = attempt + 1;
+          if (error) {
+            error.attempts = attempt + 1;
+            // No Retry-After means the old two fast retries remain available,
+            // but a final HTTP 429 still initiates a conservative cooldown.
+            if (error.httpStatus === 429 && !error.retryAfterMs) {
+              cooldownUntil = Math.max(cooldownUntil, Date.now() + 60000);
+              error = rateLimited(cooldownUntil - Date.now());
+              error.attempts = attempt + 1;
+            }
+          }
           callback(error, responseText);
         });
     }

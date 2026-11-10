@@ -1,6 +1,8 @@
 pref("extensions.twpuxp.toolbarInserted", false);
 pref("extensions.twpuxp.from", "auto");
 pref("extensions.twpuxp.to", "cs");
+// b3a4: Up to three optional target languages; an empty list keeps b3a3 behavior.
+pref("extensions.twpuxp.favoriteTargetLanguages", "");
 pref("extensions.twpuxp.batchSize", 8);
 pref("extensions.twpuxp.maxNodes", 0);
 pref("extensions.twpuxp.requestDelayMs", 0);
@@ -42,3 +44,6 @@ pref("extensions.twpuxp.shortcutRestore", "alt,shift|VK_0");
 
 // a26+: privacy-enhanced HTTPS translation requests; fails closed if UXP cannot enforce protection.
 pref("extensions.twpuxp.privacyEnhancedRequests", true);
+
+// b3a5: case-sensitive personal translation terms; ASCII-safe encoded preference.
+pref("extensions.twpuxp.customDictionary", "");

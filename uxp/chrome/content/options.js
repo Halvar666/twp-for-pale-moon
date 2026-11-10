@@ -5,6 +5,14 @@
 var TWPOptions = (function () {
   "use strict";
   var PREFIX = "extensions.twpuxp.";
+  function L(key, fallback, args) {
+    return typeof TWPUXPL10n !== "undefined" ?
+      TWPUXPL10n.get(key, fallback, args) :
+      (args ? args.reduce(function(s, item, i) {
+        return s.split("{" + i + "}").join(String(item));
+      }, fallback) : fallback);
+  }
+
   var shortcuts = {toggle:"", selection:"", restore:""};
   var prefs = Components.classes["@mozilla.org/preferences-service;1"]
     .getService(Components.interfaces.nsIPrefBranch);
@@ -17,6 +25,37 @@ var TWPOptions = (function () {
   }
   function getInt(name, fallback) {
     try { return prefs.getIntPref(PREFIX + name); } catch (e) { return fallback; }
+  }
+  function favoriteList(n) { return byId("favorite" + n); }
+  function initFavorites() {
+    if (typeof TWPUXPFavoriteLanguages === "undefined") return;
+    var favorites = TWPUXPFavoriteLanguages.list(getString("favoriteTargetLanguages", ""));
+    var entries = TWPUXPFavoriteLanguages.catalog();
+    for (var n = 1; n <= 3; n++) {
+      var list = favoriteList(n);
+      if (!list) continue;
+      var popup = list.getElementsByTagName("menupopup")[0];
+      if (!popup) continue;
+      list.selectedItem = null;
+      while (popup.firstChild) popup.removeChild(popup.firstChild);
+      [["",L("favorites.none", "Not selected")]].concat(entries).forEach(function(entry) {
+        var item = document.createElement("menuitem");
+        item.setAttribute("value", entry[0]);
+        item.setAttribute("label", entry[1]);
+        popup.appendChild(item);
+      });
+      TWPUXPLanguageMenus.choose(list, favorites[n - 1] || "");
+    }
+  }
+  function currentFavorites() {
+    if (typeof TWPUXPFavoriteLanguages === "undefined") return "";
+    var codes = [];
+    for (var n = 1; n <= 3; n++) {
+      var list = favoriteList(n);
+      var code = list ? TWPUXPLanguageMenus.value(list) : "";
+      if (code) codes.push(code);
+    }
+    return TWPUXPFavoriteLanguages.validate(codes);
   }
   function init() {
     var serviceList = byId('service');
@@ -33,6 +72,11 @@ var TWPOptions = (function () {
     TWPUXPLanguageMenus.populate(byId("to"), false, service);
     TWPUXPLanguageMenus.choose(byId("from"), getString("from", "auto"));
     TWPUXPLanguageMenus.choose(byId("to"), getString("to", "cs"));
+    initFavorites();
+    if (byId("dictionary") && typeof TWPUXPCustomDictionary !== "undefined") {
+      try { byId("dictionary").value = TWPUXPCustomDictionary.decode(getString("customDictionary", "")); }
+      catch (e) { byId("dictionary").value = ""; }
+    }
     byId("autoenabled").checked = getBool("autoTranslateEnabled", false);
     byId("autosites").value = getString("autoTranslateSites", "");
     byId("neversites").value = getString("neverTranslateSites", "");
@@ -57,16 +101,18 @@ var TWPOptions = (function () {
     byId("concurrency").value = getInt("concurrentRequests", 3);
     byId("batch").value = getInt("batchSize", 8);
     byId("maxnodes").value = getInt("maxNodes", 0);
+    if (byId("backupkey")) byId("backupkey").checked = false; // Secrets off by default.
   }
   function updateCacheCount() {
     var n = TWPUXPCache.count();
-    byId("cachecount").value = String(n) + " stored translation" + (n === 1 ? "" : "s");
+    byId("cachecount").value = L(n === 1 ? "options.cacheCount.one" : "options.cacheCount.many",
+      n === 1 ? "{0} stored translation" : "{0} stored translations", [n]);
   }
   function clearCache() {
-    if (!window.confirm("Delete all locally cached translations from this Pale Moon profile?")) return;
+    if (!window.confirm(L("options.cacheConfirm", "Delete all locally cached translations from this Pale Moon profile?"))) return;
     var error = document.getElementById("twpuxp-options-error");
-    if (!TWPUXPCache.clear()) error.textContent = "Failed to clear translation cache.";
-    else error.textContent = "Stored translations cleared.";
+    if (!TWPUXPCache.clear()) error.textContent = L("options.cacheFail", "Failed to clear translation cache.");
+    else error.textContent = L("options.cacheSuccess", "Stored translations cleared.");
     updateCacheCount();
   }
   function serviceChanged() {
@@ -86,7 +132,7 @@ var TWPOptions = (function () {
     var target = TWPUXPLanguageMenus.value(byId("to"));
     if (source === "auto") {
       document.getElementById("twpuxp-options-error").textContent =
-        "Select an explicit source language before swapping.";
+        L("options.swapAuto", "Select an explicit source language before swapping.");
       return;
     }
     TWPUXPLanguageMenus.choose(byId("from"), target);
@@ -95,9 +141,9 @@ var TWPOptions = (function () {
   }
   function validNumber(name, min, max) {
     var value = String(byId(name).value).trim();
-    if (!/^[0-9]+$/.test(value)) throw new Error("Enter a whole number for " + name);
+    if (!/^[0-9]+$/.test(value)) throw new Error(L("options.numberWhole", "Enter a whole number for {0}", [name]));
     var number = Number(value);
-    if (number < min || number > max) throw new Error(name + " must be between " + min + " and " + max);
+    if (number < min || number > max) throw new Error(L("options.numberRange", "{0} must be between {1} and {2}", [name,min,max]));
     return number;
   }
   function shortcutField(action) { return document.getElementById("twpuxp-shortcut-input-" + action); }
@@ -131,7 +177,7 @@ var TWPOptions = (function () {
     if (keyCode===16 || keyCode===17 || keyCode===18 || keyCode===91 || keyCode===92 || keyCode===93) return;
     var combo=TWPUXPShortcutBindings.fromEvent(event);
     if (!combo) {
-      shortcutError("Press Ctrl, Alt or Meta with a letter, number, F-key or navigation key.");
+      shortcutError(L("options.shortcutKeys", "Press Ctrl, Alt or Meta with a letter, number, F-key or navigation key."));
       return;
     }
     setShortcut(action,combo);
@@ -147,9 +193,9 @@ var TWPOptions = (function () {
       var serviceList = byId('service');
       var service = serviceList.selectedItem ? serviceList.selectedItem.getAttribute('value') : '';
       if (service !== 'google' && service !== 'bing' && service !== 'deepl')
-        throw new Error('Choose a valid translation service.');
+        throw new Error(L("options.invalidService", "Choose a valid translation service."));
       if (!TWPUXPLanguageMenus.has(source, true, service) || !TWPUXPLanguageMenus.has(target, false, service))
-        throw new Error('Choose languages supported by the selected service.');
+        throw new Error(L("options.invalidLanguages", "Choose languages supported by the selected service."));
       var autoSites = TWPUXPAutoRules.parseHosts(byId('autosites').value, true).join('\n');
       var neverSites = TWPUXPAutoRules.parseHosts(byId('neversites').value, true).join('\n');
       var autoLangs = TWPUXPAutoRules.parseLanguages(byId('autolangs').value, service, true).join(',');
@@ -158,9 +204,14 @@ var TWPOptions = (function () {
       var batch = validNumber("batch", 1, 20);
       var limit = validNumber("maxnodes", 0, 1000000);
       var validatedShortcuts=TWPUXPShortcutBindings.validateSet(shortcuts);
+      var favorites = currentFavorites(); // Reject invalid/duplicate choices before any preference write.
+      var dictionary = (byId("dictionary") && typeof TWPUXPCustomDictionary !== "undefined") ?
+        TWPUXPCustomDictionary.encode(byId("dictionary").value) : getString("customDictionary", "");
       // Validate all inputs before modifying any persistent preference.
       prefs.setCharPref(PREFIX + "from", source);
       prefs.setCharPref(PREFIX + "to", target);
+      prefs.setCharPref(PREFIX + "favoriteTargetLanguages", favorites);
+      prefs.setCharPref(PREFIX + "customDictionary", dictionary);
       prefs.setCharPref(PREFIX + "translationService", service);
       prefs.setBoolPref(PREFIX + "autoTranslateEnabled", byId("autoenabled").checked);
       prefs.setCharPref(PREFIX + "autoTranslateSites", autoSites);
@@ -210,7 +261,131 @@ var TWPOptions = (function () {
       window.close();
     } catch (e) { error.textContent = e.message; }
   }
+  // b3a1: Settings backup is deliberately separate from the translation cache.
+  function backupStatus(message, isError) {
+    var status = byId("backupstatus");
+    var error = document.getElementById("twpuxp-options-error");
+    status.value = isError ? "" : message;
+    status.textContent = isError ? "" : message;
+    error.textContent = isError ? message : "";
+  }
+  function chooseBackupFile(mode) {
+    var Cc = Components.classes, Ci = Components.interfaces;
+    var picker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+    picker.init(window, mode === "save" ? L("options.exportTitle", "Export TWP settings") : L("options.importTitle", "Import TWP settings"),
+      mode === "save" ? Ci.nsIFilePicker.modeSave : Ci.nsIFilePicker.modeOpen);
+    picker.appendFilter(L("options.jsonFilter", "JSON settings (*.json)"), "*.json");
+    picker.appendFilters(Ci.nsIFilePicker.filterAll);
+    if (mode === "save") {
+      picker.defaultExtension = "json";
+      picker.defaultString = "twp-settings-" + new Date().toISOString().slice(0, 10) + ".json";
+    }
+    if (picker.show() === Ci.nsIFilePicker.returnCancel) return null;
+    return picker.file;
+  }
+  function writeBackupFile(file, text) {
+    // Safe output keeps an existing backup untouched if a write fails.
+    var Cc = Components.classes, Ci = Components.interfaces;
+    var stream = Cc["@mozilla.org/network/safe-file-output-stream;1"]
+      .createInstance(Ci.nsIFileOutputStream);
+    stream.init(file, 0x02 | 0x08 | 0x20, 384, 0);
+    var finished = false;
+    try {
+      var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
+        .createInstance(Ci.nsIScriptableUnicodeConverter);
+      converter.charset = "UTF-8";
+      var bytes = converter.convertToByteArray(text, {});
+      for (var pos = 0; pos < bytes.length; pos += 8192) {
+        var block = bytes.slice(pos, pos + 8192);
+        var binary = String.fromCharCode.apply(null, block);
+        if (stream.write(binary, binary.length) !== binary.length)
+          throw new Error(L("options.writeError", "Could not write the complete backup."));
+      }
+      stream.QueryInterface(Ci.nsISafeOutputStream).finish();
+      finished = true;
+    } finally {
+      if (!finished) try { stream.close(); } catch (ignored) {}
+    }
+  }
+  function readBackupFile(file) {
+    if (file.fileSize > TWPUXPSettingsBackup.maxBytes)
+      throw new Error(L("options.sizeError", "Backup exceeds 256 KiB."));
+    var Cc = Components.classes, Ci = Components.interfaces;
+    var raw = Cc["@mozilla.org/network/file-input-stream;1"]
+      .createInstance(Ci.nsIFileInputStream);
+    raw.init(file, 0x01, 0, 0);
+    var converter = null, parts = [], total = 0;
+    try {
+      converter = Cc["@mozilla.org/intl/converter-input-stream;1"]
+        .createInstance(Ci.nsIConverterInputStream);
+      converter.init(raw, "UTF-8", 4096, 0); // 0: invalid UTF-8 is an error.
+      var piece = {}, count;
+      while ((count = converter.readString(4096, piece)) > 0) {
+        total += piece.value.length;
+        if (total > TWPUXPSettingsBackup.maxBytes)
+          throw new Error(L("options.sizeError", "Backup exceeds 256 KiB."));
+        parts.push(piece.value);
+      }
+      return parts.join("");
+    } finally {
+      if (converter) converter.close();
+      else raw.close();
+    }
+  }
+  function backupDeps() {
+    return {menus:TWPUXPLanguageMenus, rules:TWPUXPAutoRules,
+      shortcuts:TWPUXPShortcutBindings, favorites:TWPUXPFavoriteLanguages,
+      dictionary:TWPUXPCustomDictionary};
+  }
+  function syncRestoredSettings() {
+    // Preference observers are the primary update mechanism. The direct calls
+    // cover older XUL builds where some observers cannot be registered.
+    try {
+      var opener = window.opener;
+      if (!opener) return;
+      if (opener.TWPUXPShortcuts) opener.TWPUXPShortcuts.sync();
+      if (opener.TWPUXP) {
+        if (typeof opener.TWPUXP.configureProgressIndicator === "function")
+          opener.TWPUXP.configureProgressIndicator(getBool("showPageProgress", false));
+        if (typeof opener.TWPUXP.configureOriginalHover === "function")
+          opener.TWPUXP.configureOriginalHover(getBool("showOriginalOnHover", false));
+      }
+    } catch (ignored) { /* The add-ons manager is not necessarily a browser window. */ }
+  }
+  function exportSettings() {
+    backupStatus("", false);
+    try {
+      var includeKey = !!byId("backupkey").checked;
+      if (includeKey && !window.confirm(L("options.exportSecretConfirm", "Include the API key in a readable JSON backup? Anyone with this file can see it.")))
+        return;
+      var file = chooseBackupFile("save");
+      if (!file) return;
+      var json = TWPUXPSettingsBackup.exportJSON(prefs, includeKey);
+      writeBackupFile(file, json);
+      backupStatus(L("options.exportDone", "Settings exported successfully."), false);
+    } catch (e) { backupStatus(L("options.exportError", "Export failed: {0}", [e.message]), true); }
+  }
+  function importSettings() {
+    backupStatus("", false);
+    try {
+      var file = chooseBackupFile("open");
+      if (!file) return;
+      // No preference is changed until the entire input is validated.
+      var values = TWPUXPSettingsBackup.decode(readBackupFile(file), prefs, backupDeps());
+      if (!window.confirm(L("options.importConfirm", "Restore {0} settings from this file? Existing saved preferences will be overwritten and unsaved dialog changes discarded.", [Object.keys(values).length])))
+        return;
+      var restoreKey = false;
+      if (Object.prototype.hasOwnProperty.call(values, "apiKey")) {
+        restoreKey = window.confirm(L("options.importSecretConfirm", "The backup contains an API key. Restore this sensitive value too? Choose Cancel to keep the current key."));
+      }
+      var count = TWPUXPSettingsBackup.restore(prefs, values, restoreKey);
+      init(); // Refresh the fields from the restored preferences.
+      syncRestoredSettings();
+      backupStatus(L("options.importDone", "Restored {0} settings. Reopen other browser windows if needed.", [count]), false);
+    } catch (e) { backupStatus(L("options.importError", "Import failed: {0}", [e.message]), true); }
+  }
   return {init: init, swap: swap, save: save, serviceChanged: serviceChanged,
     clearCache: clearCache, captureShortcut:captureShortcut,
-    clearShortcut:clearShortcut, resetShortcut:resetShortcut};
+    clearShortcut:clearShortcut, resetShortcut:resetShortcut,
+    exportSettings:exportSettings, importSettings:importSettings};
 })();

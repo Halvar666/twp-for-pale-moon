@@ -8,6 +8,23 @@ var TWPBingProvider = (function () {
   "use strict";
   var endpoint = "https://edge.microsoft.com/translate/translatetext?isEnterpriseClient=false";
   var cache = new Map();
+  var cooldownUntil = 0;
+  function retryAfterMs(value) {
+    if (!value) return 0;
+    var raw = String(value).trim();
+    if (/^\d+(?:\.\d+)?$/.test(raw))
+      return Math.max(0, Math.round(Number(raw) * 1000));
+    var date = Date.parse(raw);
+    return isNaN(date) ? 0 : Math.max(0, date - Date.now());
+  }
+  function rateLimited(wait) {
+    var err = new Error("Bing endpoint HTTP 429 (rate limit)");
+    err.httpStatus = 429;
+    err.rateLimited = true;
+    err.retryable = false;
+    err.retryAfterMs = Math.max(0, wait);
+    return err;
+  }
   function normalizeLanguage(lang) {
     var map = {
       "auto":"auto-detect", "zh-CN":"zh-Hans", "zh-TW":"zh-Hant",
@@ -73,6 +90,8 @@ var TWPBingProvider = (function () {
   }
   function makeRequest(items, source, target, timeout, callback) {
     if (!items.length) {callback(null,[]); return;}
+    var remaining = cooldownUntil - Date.now();
+    if (remaining > 0) {callback(rateLimited(remaining));return;}
     var from=normalizeLanguage(source), to=normalizeLanguage(target);
     var url=endpoint + (from !== 'auto-detect' ? '&from=' + encodeURIComponent(from) : '')
       + '&to=' + encodeURIComponent(to);
@@ -84,7 +103,18 @@ var TWPBingProvider = (function () {
       req.setRequestHeader('Content-Type','application/json');
       req.onload=function() {
         if (req.status < 200 || req.status >= 300) {
-          done(new Error('Bing endpoint HTTP '+req.status)); return;
+          if (req.status === 429) {
+            var after = 0;
+            try { after = retryAfterMs(req.getResponseHeader('Retry-After')); }
+            catch (ignore) { /* Older UXP may hide this header. */ }
+            cooldownUntil = Math.max(cooldownUntil, Date.now() + Math.max(60000, after));
+            done(rateLimited(cooldownUntil - Date.now()));
+            return;
+          }
+          var err = new Error('Bing endpoint HTTP ' + req.status);
+          err.httpStatus = req.status;
+          err.retryable = [408, 500, 502, 503, 504].indexOf(req.status) !== -1;
+          done(err); return;
         }
         try {
           var body=JSON.parse(req.responseText);
@@ -99,8 +129,8 @@ var TWPBingProvider = (function () {
           done(null,texts);
         } catch(e) { done(e); }
       };
-      req.onerror=function() { done(new Error('Bing endpoint network error (HTTP 0)')); };
-      req.ontimeout=function() { done(new Error('Bing endpoint timed out')); };
+      req.onerror=function() { var e=new Error('Bing endpoint network error (HTTP 0)');e.retryable=true;done(e); };
+      req.ontimeout=function() { var e=new Error('Bing endpoint timed out');e.retryable=true;done(e); };
       req.onabort=function() { done(new Error('Bing endpoint request aborted')); };
       req.send(JSON.stringify(items));
     } catch(e) { done(e); }

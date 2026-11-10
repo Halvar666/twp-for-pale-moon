@@ -1,0 +1,111 @@
+<!-- TWP for Pale Moon: UI strings, MPL-2.0 -->
+<!ENTITY options.001 "TWP for Pale Moon – Ustawienia">
+<!ENTITY options.002 "TWP for Pale Moon">
+<!ENTITY options.003 "Ustawienia natywnego tłumaczenia UXP">
+<!ENTITY options.004 "Domyślne języki tłumaczenia">
+<!ENTITY options.005 "Język źródłowy">
+<!ENTITY options.006 "Język docelowy">
+<!ENTITY options.007 "Zamień języki">
+<!ENTITY options.008 "Przycisk na pasku narzędzi tłumaczy bieżącą stronę na wybrane języki.">
+<!ENTITY options.009 "Usługa tłumaczenia">
+<!ENTITY options.010 "Google Translate (domyślny)">
+<!ENTITY options.011 "Bing Translator">
+<!ENTITY options.012 "DeepL (eksperymentalny, nieoficjalny)">
+<!ENTITY options.013 "Usługa dotyczy stron i zaznaczonego tekstu. Wszystkie trzy usługi używają nieoficjalnych interfejsów; dostępność DeepL może się zmienić.">
+<!ENTITY options.014 "Prywatność i żądania sieciowe">
+<!ENTITY options.015 "Żądania tłumaczenia ze zwiększoną ochroną prywatności (zalecane)">
+<!ENTITY options.016 "Korzysta z HTTPS i chronionych żądań XPCOM dla Google, Bing i DeepL, również podczas pobierania tokenu Google. Nie wysyła ciasteczek ani zapisanych danych logowania i usuwa nagłówek Referer. Jeśli ochrona jest niemożliwa, blokuje żądanie. Chroni prywatność, ale nie zapewnia anonimowości.">
+<!ENTITY options.017 "Wybrana usługa nadal otrzymuje tekst i adres IP sieci (lub VPN/proxy). Nie można zagwarantować usunięcia wszystkich śladów sieciowych ani nagłówka Origin. Uwierzytelniające serwery proxy HTTP mogą wymagać wyłączenia tej opcji.">
+<!ENTITY options.018 "Reguły automatycznego tłumaczenia">
+<!ENTITY options.019 "Włącz automatyczne tłumaczenie pasujących stron lub języków">
+<!ENTITY options.020 "Reguły obowiązują po otwarciu strony lub przełączeniu karty. Tłumaczenie ręczne jest zawsze dostępne.">
+<!ENTITY options.021 "Zawsze tłumacz te strony (jedna domena w wierszu)">
+<!ENTITY options.022 "Nigdy nie tłumacz automatycznie tych stron (ma pierwszeństwo)">
+<!ENTITY options.023 "Zawsze tłumacz te języki stron (kody, np. en, de, sk)">
+<!ENTITY options.024 "Nigdy nie tłumacz automatycznie tych języków (np. en, de)">
+<!ENTITY options.025 "Reguły domen obejmują też poddomeny. Reguły językowe wymagają języka zadeklarowanego na stronie (html lang lub metadane). Wykluczenia mają pierwszeństwo. Tłumaczenie ręczne pozostaje dostępne.">
+<!ENTITY options.026 "Lokalna pamięć podręczna tłumaczeń">
+<!ENTITY options.027 "Zapisuj tłumaczenia w profilu Pale Moon (opcjonalnie)">
+<!ENTITY options.028 "Może zapisywać tekst odwiedzanych stron, w tym treści osobiste. Domyślnie wyłączona i nieużywana w oknach prywatnych. Wyłączenie nie usuwa zapisanych wpisów.">
+<!ENTITY options.029 "Wyczyść zapisane tłumaczenia">
+<!ENTITY options.030 "Kopia zapasowa i przywracanie">
+<!ENTITY options.031 "Eksportuje zapisane ustawienia, języki, reguły stron i skróty do pliku JSON. Nie obejmuje pamięci podręcznej ani pozycji przycisku. Zapisz niezapisane zmiany przed eksportem.">
+<!ENTITY options.032 "Dołącz klucz API do kopii (dane poufne; domyślnie wyłączone)">
+<!ENTITY options.033 "Eksportuj ustawienia…">
+<!ENTITY options.034 "Importuj ustawienia…">
+<!ENTITY options.035 "Skróty klawiaturowe">
+<!ENTITY options.036 "Włącz skróty TWP">
+<!ENTITY options.037 "Przetłumacz / przywróć stronę">
+<!ENTITY options.038 "Kliknij i naciśnij kombinację; Esc anuluje, Delete usuwa">
+<!ENTITY options.039 "Wyczyść">
+<!ENTITY options.040 "Domyślny">
+<!ENTITY options.041 "Przetłumacz zaznaczenie">
+<!ENTITY options.042 "Kliknij i naciśnij kombinację; Esc anuluje, Delete usuwa">
+<!ENTITY options.043 "Wyczyść">
+<!ENTITY options.044 "Domyślny">
+<!ENTITY options.045 "Przywróć oryginał">
+<!ENTITY options.046 "Kliknij i naciśnij kombinację; Esc anuluje, Delete usuwa">
+<!ENTITY options.047 "Wyczyść">
+<!ENTITY options.048 "Domyślny">
+<!ENTITY options.049 "Kliknij pole skrótu i naciśnij kombinację. Esc anuluje; Delete lub Wyczyść wyłącza akcję. Domyślny przywraca początkowy skrót. Zapisz przyciskiem „Zapisz ustawienia”.">
+<!ENTITY options.050 "Skróty systemu i przeglądarki mogą mieć pierwszeństwo (np. KDE Ctrl+Alt+T). Nie można wykryć tych konfliktów automatycznie.">
+<!ENTITY options.051 "Tłumaczenie stron">
+<!ENTITY options.052 "Tłumacz treść ładowaną dynamicznie">
+<!ENTITY options.053 "Tłumacz etykiety i atrybuty HTML (alt, title, placeholder, aria-label)">
+<!ENTITY options.054 "Tłumacz dostępne ramki z tej samej domeny (iframe)">
+<!ENTITY options.055 "Grupuj tekst według akapitów (silnik TWP)">
+<!ENTITY options.056 "Pokazuj postęp tłumaczenia na stronie">
+<!ENTITY options.057 "Domyślnie wyłączone. Postęp jest widoczny w panelu przycisku; ważne błędy pojawiają się na stronie.">
+<!ENTITY options.058 "Pokaż oryginał po najechaniu kursorem na przetłumaczony tekst">
+<!ENTITY options.059 "Oryginał pojawia się w dymku bez zmiany przetłumaczonej strony. Dostępny również w panelu.">
+<!ENTITY options.060 "Żądania równoległe (1–6)">
+<!ENTITY options.061 "Grupy na żądanie (1–20)">
+<!ENTITY options.062 "Limit węzłów tekstowych (0 = bez limitu)">
+<!ENTITY options.063 "DeepL jest eksperymentalny i może wymagać zmian protokołu. Yandex nie jest jeszcze dostępny.">
+<!ENTITY options.064 "Anuluj">
+<!ENTITY options.065 "Zapisz ustawienia">
+<!ENTITY browser.001 "Tłumaczenie stron internetowych">
+<!ENTITY browser.002 "Oryginał">
+<!ENTITY browser.003 "Oryginał">
+<!ENTITY browser.004 "Przetłumacz stronę">
+<!ENTITY browser.005 "Anuluj">
+<!ENTITY browser.006 "Języki tłumaczenia">
+<!ENTITY browser.007 "⇄">
+<!ENTITY browser.008 "Zamień języki">
+<!ENTITY browser.009 "Usługa tłumaczenia">
+<!ENTITY browser.010 "Google Translate">
+<!ENTITY browser.011 "Bing Translator">
+<!ENTITY browser.012 "DeepL (eksperymentalny)">
+<!ENTITY browser.013 "Bieżąca witryna">
+<!ENTITY browser.014 "Zawsze tłumacz tę stronę">
+<!ENTITY browser.015 "Nigdy nie tłumacz automatycznie tej strony">
+<!ENTITY browser.016 "Zawsze tłumacz ten język">
+<!ENTITY browser.017 "Nigdy nie tłumacz automatycznie tego języka">
+<!ENTITY browser.018 "Pokaż oryginał po najechaniu kursorem">
+<!ENTITY browser.019 "Przetłumacz zaznaczenie…">
+<!ENTITY browser.020 "Ustawienia…">
+<!ENTITY browser.021 "Wybierz język i przetłumacz stronę.">
+<!ENTITY browser.022 "TWP for Pale Moon">
+<!ENTITY browser.023 "TWP for Pale Moon – lewy przycisk: panel tłumaczenia; Ctrl+klik: tłumacz stronę; prawy: menu">
+<!ENTITY selection.001 "TWP – Tłumaczenie zaznaczonego tekstu">
+<!ENTITY selection.002 "TWP – Tłumaczenie zaznaczonego tekstu">
+<!ENTITY selection.003 "Z">
+<!ENTITY selection.004 "Zamień">
+<!ENTITY selection.005 "Zamień języki tłumaczenia">
+<!ENTITY selection.006 "Na">
+<!ENTITY selection.007 "Przetłumacz">
+<!ENTITY selection.008 "Usługa">
+<!ENTITY selection.009 "Google Translate">
+<!ENTITY selection.010 "Bing Translator">
+<!ENTITY selection.011 "DeepL (eksperymentalny, nieoficjalny)">
+<!ENTITY selection.012 "Tekst oryginalny">
+<!ENTITY selection.013 "Tłumaczenie">
+<!ENTITY selection.014 "Tłumaczenie…">
+<!ENTITY selection.015 "Kopiuj tłumaczenie">
+<!ENTITY selection.016 "Zamknij">
+<!ENTITY options.066 "Ulubione języki docelowe">
+<!ENTITY options.067 "Opcjonalnie wybierz maksymalnie trzy różne języki docelowe. Możesz szybko przełączać je w panelu tłumaczenia. Nieobsługiwane języki są ukrywane.">
+<!ENTITY browser.024 "Ulubione języki docelowe">
+<!ENTITY options.068 "Słownik użytkownika">
+<!ENTITY options.069 "Jedna reguła w wierszu: wyrażenie =&gt; zamiennik. Pusty zamiennik zachowuje oryginalne wyrażenie. Wielkość liter ma znaczenie.">
+<!ENTITY options.070 "Dotyczy stron i zaznaczonego tekstu. Pozostały tekst jest tłumaczony osobno; wyrażenia słownika nie są wysyłane. Maksymalnie 100 reguł.">

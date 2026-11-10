@@ -6,12 +6,20 @@
 var TWPSelectionResult = (function () {
   "use strict";
   var closed = false, args = null, generation = 0;
+  function L(key, fallback, args) {
+    return typeof TWPUXPL10n !== "undefined" ?
+      TWPUXPL10n.get(key, fallback, args) :
+      (args ? args.reduce(function(s, item, i) {
+        return s.split("{" + i + "}").join(String(item));
+      }, fallback) : fallback);
+  }
+
   function byId(id) { return document.getElementById(id); }
   function tell(message) { byId("twpuxp-selection-status").textContent = message; }
   function init() {
     args = window.arguments && window.arguments[0];
     if (!args || !args.original || typeof args.request !== "function") {
-      tell("No selected text was provided."); return;
+      tell(L("selection.none", "No selected text was provided.")); return;
     }
     var source = byId("twpuxp-selection-from"), target = byId("twpuxp-selection-to");
     TWPUXPLanguageMenus.populate(source, true, args.service || "google");
@@ -51,32 +59,32 @@ var TWPSelectionResult = (function () {
     var service = serviceMenu && serviceMenu.selectedItem ?
       serviceMenu.selectedItem.getAttribute('value') : (args.service || 'google');
     if (service !== 'google' && service !== 'bing' && service !== 'deepl') {
-      tell('Select a valid translation service.'); return;
+      tell(L("selection.invalidService", "Select a valid translation service.")); return;
     }
     if (!TWPUXPLanguageMenus.has(src, true, service) ||
         !TWPUXPLanguageMenus.has(tgt, false, service)) {
-      tell('Select languages supported by ' + service + '.'); return;
+      tell(L("selection.invalidLang", "Select languages supported by {0}.", [service])); return;
     }
     byId("twpuxp-selection-direction").value = src + " → " + tgt + " (" + service + ")";
     byId("twpuxp-selection-translation").value = "";
     byId("twpuxp-selection-copy").disabled = true;
-    tell("Translating…");
+    tell(L("selection.running", "Translating…"));
     try {
       var onResult = function (error, text) {
         if (closed || myGeneration !== generation) return;
         if (error || !text) {
-          tell("Translation failed: " +
-            (error && error.message ? error.message : "Empty translation"));
+          tell(L("selection.failed", "Translation failed: {0}", [
+            (error && error.message ? error.message : L("selection.empty", "Empty translation"))]));
           return;
         }
         byId("twpuxp-selection-translation").value = text;
         byId("twpuxp-selection-copy").disabled = false;
-        tell("Translation complete (" + service + ")");
+        tell(L("selection.done", "Translation complete ({0})", [service]));
       };
       // Keep compatibility with older 3-argument request callbacks from a7.
       if (args.request.length >= 4) args.request(src, tgt, service, onResult);
       else args.request(src, tgt, onResult);
-    } catch (e) { tell("Translation failed: " + e.message); }
+    } catch (e) { tell(L("selection.failed", "Translation failed: {0}", [e.message])); }
   }
   function swap() {
     if (closed || !args) return;
@@ -86,7 +94,7 @@ var TWPSelectionResult = (function () {
       // Auto is not a valid target language. Resolve only if page metadata
       // provides an explicit source; never invent a guessed source language.
       if (!args.source || args.source === "auto") {
-        tell("Choose a source language before swapping."); return;
+        tell(L("selection.swapSource", "Choose a source language before swapping.")); return;
       }
       from = args.source;
     }
@@ -94,7 +102,7 @@ var TWPSelectionResult = (function () {
     var service = serviceMenu && serviceMenu.selectedItem ?
       serviceMenu.selectedItem.getAttribute('value') : (args.service || 'google');
     if (!TWPUXPLanguageMenus.has(from, false, service)) {
-      tell("Select a supported source language before swapping."); return;
+      tell(L("selection.swapUnsupported", "Select a supported source language before swapping.")); return;
     }
     TWPUXPLanguageMenus.choose(byId("twpuxp-selection-from"), to);
     TWPUXPLanguageMenus.choose(byId("twpuxp-selection-to"), from);
@@ -107,8 +115,8 @@ var TWPSelectionResult = (function () {
       var helper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
         .getService(Components.interfaces.nsIClipboardHelper);
       helper.copyString(text);
-      tell("Copied to clipboard");
-    } catch (e) { tell("Unable to copy: " + e.message); }
+      tell(L("selection.copied", "Copied to clipboard"));
+    } catch (e) { tell(L("selection.copyFailed", "Unable to copy: {0}", [e.message])); }
   }
   function close() { closed = true; ++generation; }
   return {init: init, run: run, swap: swap, copy: copy, close: close, serviceChanged: serviceChanged};

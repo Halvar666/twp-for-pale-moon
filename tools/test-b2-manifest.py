@@ -3,6 +3,7 @@
 from pathlib import Path
 import xml.etree.ElementTree as ET
 import zipfile
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = {"em": "http://www.mozilla.org/2004/em-rdf#"}
@@ -17,7 +18,7 @@ def verify(data):
     header = root.find("./{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description")
     assert header is not None
     assert header.find("em:id", NS).text == ADDON
-    assert header.find("em:version", NS).text == "1.0.0b2"
+    assert re.fullmatch(r"1\.0\.0b\d+(?:a\d+)?", header.find("em:version", NS).text), "Unexpected beta version"
     targets = {}
     for target in header.findall("em:targetApplication", NS):
         desc = target.find("{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description")
@@ -32,4 +33,4 @@ source = (ROOT / "uxp/install.rdf").read_bytes()
 verify(source)
 # Check the committed XPI too when present, without making tests depend on
 # the user's download directory or a preexisting package.
-print("PASS b2: version, add-on ID, Pale Moon and basic Basilisk 52.9.x targets")
+print("PASS: beta version, add-on ID, Pale Moon and basic Basilisk 52.9.x targets")

@@ -1,13 +1,23 @@
 # TWP for Pale Moon
 
-**Version:** 1.0.0b2 (beta release candidate)  
+**Version:** 1.0.0b3 (third public beta)  
 **Platform:** Pale Moon 33–35 declared (primary browser); Basilisk 52.9.* has **basic compatibility**. The maintainer has confirmed that Basilisk toolbar placement remains stable after restarts; full feature testing there is not claimed.  
 **License:** MPL 2.0 (see `LICENSE` and `CREDITS-UXP.md`)  
 **Origin:** Unofficial native port of [TWP – Translate Web Pages](https://github.com/FilipePS/Traduzir-paginas-web) by FilipePS. This is **not an official release** of upstream TWP.
 
 The port adds a native toolbar button, translation popup, language settings and page/selection translation to Pale Moon. The complete upstream WebExtension source snapshot is preserved in `src/` for reference; executable Pale Moon code lives separately in `uxp/`. This is a community-developed port, not endorsed by the original TWP developer.
 
+## b3 features and compatibility notes
+
+- Preferences → **Backup and restore**: export/import versioned JSON settings. Imports are validated before any preference is written; write errors trigger rollback. The SQLite translation cache and internal toolbar-position marker are never included. API key export is opt-in; importing an included key requires a separate confirmation.
+- The translation-service chooser is enclosed in a horizontal XUL box to avoid vertical flex expansion with some older native themes. This is a best-effort layout adjustment, **not** New Moon 28 compatibility support.
+- b3 includes native English and Czech UI strings. b3 adds German, French, Spanish, Polish, Slovak and Italian. The browser UI locale selects the language; translation target language and stored codes are unchanged. Language names still come from the TWP catalog. New translations should be checked by native speakers.
+- Pale Moon 33–35 remains the primary target; Basilisk 52.9.x retains basic compatibility. The eight translations are initial drafts and may need proofreading.
+
 ## Features
+
+- Native UI localization: English, Czech, German, French, Spanish, Polish, Slovak and Italian (non-English drafts may need native-speaker proofreading).
+- Optional **three favorite target languages**, selectable in the toolbar translation popup without reopening Preferences; hidden when not configured, filtered by provider capability and included in JSON settings backups.
 
 - Translate full pages or selected text using **Google Translate** or **Bing Translator**. Experimental **DeepL** is optional and may be rate-limited.
 - Detect source language where possible; choose source and target languages in the popup.
@@ -19,7 +29,9 @@ The port adds a native toolbar button, translation popup, language settings and 
 - **Privacy-enhanced translation requests enabled by default** to suppress cookies/credentials and clear Referer when supported by the UXP channel. Fails closed if the required channel protection cannot be applied.
 - Theme-independent toolbar button styling for regular/compact toolbars and the Customize Toolbar palette.
 - Preserve line breaks, blank lines and indentation in selected-text translation and preformatted natural-language text.
+- Conservative service backoff: Google/Bing honor HTTP 429 Retry-After, DeepL stops on HTTP 429 and retries one transient transport/server failure with a short delay. The page reports the remaining cooldown where available.
 - Context submenu for page translation and per-site automatic translation rules. Experimental DeepL dispatch pacing reduced to 750 ms (still one concurrent request).
+- **Custom dictionary:** Personal dictionary rules (`source => replacement`, or blank replacement to protect a term), preserving exact original/replacement text while translating surrounding fragments. Includes backup/export and eight UI language labels. Case-sensitive, per text node, all language directions. No dictionary terms are sent as translated fragments when matching.
 
 ## Limitations and privacy
 
@@ -27,7 +39,7 @@ The port adds a native toolbar button, translation popup, language settings and 
 - The provider still receives the **translated text and public/VPN IP address**. Privacy-enhanced requests are **not anonymity**. See [`docs/PRIVACY-UXP.md`](docs/PRIVACY-UXP.md).
 - Translation support does **not** include cross-origin iframe DOMs or every original WebExtension TWP feature. Google and Bing were tested on large pages, but provider availability cannot be guaranteed.
 - Storing translations on disk can expose personal/sensitive page text to anyone with access to the local profile. Enable persistent cache only if acceptable; turning it off does **not** delete prior entries. Private windows do not use the persistent cache.
-- **Beta software, not a stable release.** The 1.0.0b2 release candidate is covered by 45 automated regression suites, including multiline text, Google provider contract, DeepL pacing, context-menu behavior, and toolbar placement. Real-world testing of all supported browser versions and translation providers is not complete.
+- **Beta software, not a stable release.** The 1.0.0b3 beta build is covered by 58 offline regression suites, including settings backups, multiline text, provider contracts, context-menu behavior, and toolbar placement. Real-world testing of all supported browser versions and translation providers is not complete.
 
 ## Install / update
 
@@ -68,16 +80,18 @@ Factories receive **explicit context dependencies** and share the original per-w
 
 For the historical a32 scheduler lifecycle and error recovery acceptance criteria see [`docs/STABILIZATION-CHECKLIST.md`](docs/STABILIZATION-CHECKLIST.md).
 
-## Manual smoke test for 1.0.0b2
+## Manual smoke test for 1.0.0b3
 
-1. Install 1.0.0b2 over the published 1.0.0b1 without resetting prefs. Check Google/Bing page and selection translation, Restore, popup, hover and cache as appropriate.
+1. Install 1.0.0b3 over b2 or b3a7 without resetting prefs. Check Google/Bing page and selection translation, Restore, popup, hover and cache as appropriate.
 2. Toggle Privacy-enhanced translation requests; the original preference value must be preserved.
 3. Test the icon in default and custom themes, both normal and small toolbars; drag it into Customize Toolbar and back. Other toolbar icons must retain their sizing and sprite regions.
 4. Open right-click menu → **About TWP for Pale Moon**. Check that it displays the installed version (read dynamically) and no longer says Experimental/Prototype.
-5. Confirm the keyboard shortcuts, per-site rules and selection context menu still respond. Check the About dialog shows `1.0.0b2`. **DeepL remains experimental**.
+5. Confirm the keyboard shortcuts, per-site rules and selection context menu still respond. Check the About dialog shows `1.0.0b3`. **DeepL remains experimental**.
+6. If a provider reports HTTP 429, verify that translation stops, shows a cooldown estimate and does not silently switch to another service. After repeated 502/503 errors, only a bounded number of requests should be sent; partial translation must remain restorable.
 
 
-6. Stress-test cancellation during an in-flight request: cancel halfway through, verify no late response rewrites the DOM, restore the original, then retry. Switch tabs during an active translation and verify only the intended tab is modified.
+7. In Preferences, export a JSON backup (no API key), modify settings, then import the backup and verify restoration. Confirm the cache and toolbar position are unchanged.
+8. Stress-test cancellation during an in-flight request: cancel halfway through, verify no late response rewrites the DOM, restore the original, then retry. Switch tabs during an active translation and verify only the intended tab is modified.
 
 ### On-page progress notices (introduced in 0.0.1a33)
 
@@ -86,9 +100,9 @@ Floating translation progress notifications are **off by default**. Open **Prefe
 
 ## Beta provenance and support
 
-This beta release candidate includes modified code based on **TWP – Translate Web Pages** by **FilipePS and contributors**, published under MPL 2.0. Its current upstream repository is <https://github.com/FilipePS/Traduzir-paginas-web>. It is **not an official FilipePS release**, and the upstream repository is not this port's support or issue tracker. The independent source repository is <https://github.com/Halvar666/twp-for-pale-moon>.
+This beta includes modified code based on **TWP – Translate Web Pages** by **FilipePS and contributors**, published under MPL 2.0. Its current upstream repository is <https://github.com/FilipePS/Traduzir-paginas-web>. It is **not an official FilipePS release**, and the upstream repository is not this port's support or issue tracker. The independent source repository is <https://github.com/Halvar666/twp-for-pale-moon>.
 
-The maintainer has tested the preceding beta candidates in Pale Moon and checked toolbar placement in Basilisk. The final b2 package should be smoke-tested before publishing. The maintainer has confirmed the provenance of the custom port icons; see `CREDITS-UXP.md` and `uxp/artwork/`.
+The maintainer has tested the preceding beta candidates in Pale Moon and checked toolbar placement in Basilisk. The b3 dictionary is conservative and case-sensitive: it matches within individual text nodes, and splitting a sentence around protected terms may change translation fluency. Users should review results before relying on them. The maintainer has confirmed the provenance of the custom port icons; see `CREDITS-UXP.md` and `uxp/artwork/`.
 
 ### Historical b2a1 test focus
 

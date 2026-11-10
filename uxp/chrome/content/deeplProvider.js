@@ -10,10 +10,10 @@ var TWPDeepLProvider = (function () {
   "use strict";
   var endpoint = "https://oneshot-free.www.deepl.com/v1/translate";
   var cache = new Map();
-  // Rate limits on this unofficial service are undocumented. When DeepL
-  // responds with 429, stop requesting until the advertised Retry-After
-  // (if any) or a conservative one-minute cooldown has elapsed. We do not
-  // use rotating proxies, hidden retries, or automatic provider switching.
+  // Rate limits on this unofficial service are undocumented. HTTP 429 is
+  // never retried automatically. One bounded retry is allowed only for
+  // transient transport/server faults (408, 500, 502, 503, 504). No proxy
+  // rotation or automatic provider switching is used.
   var cooldownUntil = 0;
   function parseRetryAfter(value) {
     if (!value) return 0;
@@ -41,69 +41,84 @@ var TWPDeepLProvider = (function () {
   }
   function makeRequest(texts, source, target, timeout, callback) {
     if (!texts.length) { callback(null, []); return; }
-    var remainingCooldown = cooldownUntil - Date.now();
-    if (remainingCooldown > 0) { callback(rateLimitError(remainingCooldown)); return; }
-    var req, finished = false;
+    var attempts = 0, finished = false;
     function finish(err, values) {
       if (!finished) { finished = true; callback(err, values); }
     }
-    try {
-      req = TWPUXPPrivacyXHR.create("POST", endpoint);
-      req.timeout = timeout || 20000;
-      req.setRequestHeader("Content-Type", "application/json");
-      // Documented by community implementations of the anonymous one-shot API.
-      req.setRequestHeader("Authorization", "None");
-      req.onload = function () {
-        if (req.status < 200 || req.status >= 300) {
-          if (req.status === 429) {
-            var after = 0;
-            try { after = parseRetryAfter(req.getResponseHeader("Retry-After")); }
-            catch (ignore) { /* Header not available. */ }
-            // Only back off; never treat a 429 as permission to retry.
-            var wait = Math.max(60000, after);
-            cooldownUntil = Date.now() + wait;
-            finish(rateLimitError(wait));
-            return;
-          }
-          var error = new Error("DeepL one-shot HTTP " + req.status +
-            (req.status === 404 ?
-              "; endpoint unavailable; choose Google or Bing" :
-              " (experimental, unofficial endpoint)"));
-          error.httpStatus = req.status;
-          error.retryable = [408, 500, 502, 503, 504].indexOf(req.status) !== -1;
-          finish(error); return;
+    // A retry is intentionally limited to one, delayed request. No 429,
+    // HTTP 4xx (other than 408), privacy failure or invalid response is retried.
+    function attemptRequest() {
+      if (finished) return;
+      var remaining = cooldownUntil - Date.now();
+      if (remaining > 0) { finish(rateLimitError(remaining)); return; }
+      attempts++;
+      var req, handled = false;
+      function complete(err, values) {
+        if (handled || finished) return;
+        handled = true; // onload/onerror may both fire in unusual XHR builds.
+        if (err && err.retryable && attempts === 1) {
+          setTimeout(attemptRequest, 1250);
+          return;
         }
-        try {
-          var data = JSON.parse(req.responseText);
-          if (!data || !Array.isArray(data.translations) ||
-              data.translations.length !== texts.length)
-            throw new Error("Unexpected DeepL translation count; storefront protocol may have changed");
-          var results = data.translations.map(function (entry) {
-            if (!entry || typeof entry.text !== "string" || !entry.text.trim())
-              throw new Error("Unexpected DeepL translation response structure");
-            return entry.text;
-          });
-          finish(null, results);
-        } catch (e) { finish(e); }
-      };
-      req.onerror = function () { finish(new Error("DeepL one-shot network error (HTTP 0)")); };
-      req.ontimeout = function () {
-        var err = new Error("DeepL one-shot request timed out");
-        err.retryable = true;
-        finish(err);
-      };
-      req.onabort = function () { finish(new Error("DeepL one-shot request aborted")); };
-      // The newer /v1/translate route needs the text and target language.
-      // Do not send source_lang="auto": omitting the field requests detection.
-      var payload = {
-        text: texts,
-        target_lang: normalizeLanguage(target, true)
-      };
-      if (source && source !== "auto") {
-        payload.source_lang = normalizeLanguage(source, false);
+        if (err) err.attempts = attempts;
+        finish(err, values);
       }
-      req.send(JSON.stringify(payload));
-    } catch (e) { finish(e); }
+      try {
+        req = TWPUXPPrivacyXHR.create("POST", endpoint);
+        req.timeout = timeout || 20000;
+        req.setRequestHeader("Content-Type", "application/json");
+        // Documented by community implementations of the anonymous one-shot API.
+        req.setRequestHeader("Authorization", "None");
+        req.onload = function () {
+          if (req.status < 200 || req.status >= 300) {
+            if (req.status === 429) {
+              var after = 0;
+              try { after = parseRetryAfter(req.getResponseHeader("Retry-After")); }
+              catch (ignore) { /* Header not available. */ }
+              var wait = Math.max(60000, after);
+              cooldownUntil = Math.max(cooldownUntil, Date.now() + wait);
+              complete(rateLimitError(cooldownUntil - Date.now()));
+              return;
+            }
+            var error = new Error("DeepL one-shot HTTP " + req.status +
+              (req.status === 404 ?
+                "; endpoint unavailable; choose Google or Bing" :
+                " (experimental, unofficial endpoint)"));
+            error.httpStatus = req.status;
+            error.retryable = [408, 500, 502, 503, 504].indexOf(req.status) !== -1;
+            complete(error); return;
+          }
+          try {
+            var data = JSON.parse(req.responseText);
+            if (!data || !Array.isArray(data.translations) ||
+                data.translations.length !== texts.length)
+              throw new Error("Unexpected DeepL translation count; storefront protocol may have changed");
+            var results = data.translations.map(function (entry) {
+              if (!entry || typeof entry.text !== "string" || !entry.text.trim())
+                throw new Error("Unexpected DeepL translation response structure");
+              return entry.text;
+            });
+            complete(null, results);
+          } catch (e) { complete(e); }
+        };
+        req.onerror = function () {
+          var err = new Error("DeepL one-shot network error (HTTP 0)");
+          err.retryable = true;
+          complete(err);
+        };
+        req.ontimeout = function () {
+          var err = new Error("DeepL one-shot request timed out");
+          err.retryable = true;
+          complete(err);
+        };
+        req.onabort = function () { complete(new Error("DeepL one-shot request aborted")); };
+        var payload = {text: texts, target_lang: normalizeLanguage(target, true)};
+        if (source && source !== "auto")
+          payload.source_lang = normalizeLanguage(source, false);
+        req.send(JSON.stringify(payload));
+      } catch (e) { complete(e); }
+    }
+    attemptRequest();
   }
   // Unlike Google/Bing HTML marker formats, DeepL returns one string per
   // original text node. We flatten the pieces, then restore their boundaries

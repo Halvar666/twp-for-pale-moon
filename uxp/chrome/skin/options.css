@@ -19,3 +19,8 @@
 /* a23: shortcut input readability while keeping the layout theme-neutral. */
 #twpuxp-options-window textbox[id^="twpuxp-shortcut-input-"] { min-width: 145px; }
 #twpuxp-options-window #twpuxp-shortcut-error { min-height: 10px; }
+
+/* b3a1: prevent native XUL menulist flex from stretching vertically in old themes. */
+#twpuxp-options-window #twpuxp-service-row { margin-top: 2px; }
+#twpuxp-options-window #twpuxp-option-service { min-width: 190px; }
+#twpuxp-options-window #twpuxp-option-backupstatus { min-height: 13px; }

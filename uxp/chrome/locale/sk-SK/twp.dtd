@@ -1,0 +1,111 @@
+<!-- TWP for Pale Moon: UI strings, MPL-2.0 -->
+<!ENTITY options.001 "TWP for Pale Moon – Nastavenia">
+<!ENTITY options.002 "TWP for Pale Moon">
+<!ENTITY options.003 "Nastavenia natívneho prekladu UXP">
+<!ENTITY options.004 "Predvolené jazyky prekladu">
+<!ENTITY options.005 "Zdrojový jazyk">
+<!ENTITY options.006 "Cieľový jazyk">
+<!ENTITY options.007 "Vymeniť jazyky">
+<!ENTITY options.008 "Tlačidlo na paneli nástrojov prekladá aktuálnu stránku pomocou týchto jazykov.">
+<!ENTITY options.009 "Prekladová služba">
+<!ENTITY options.010 "Google Translate (predvolené)">
+<!ENTITY options.011 "Bing Translator">
+<!ENTITY options.012 "DeepL (experimentálny, neoficiálny)">
+<!ENTITY options.013 "Služba sa používa pre stránky aj označený text. Všetky tri služby využívajú neoficiálne rozhrania; dostupnosť DeepL sa môže zmeniť.">
+<!ENTITY options.014 "Súkromie a sieťové požiadavky">
+<!ENTITY options.015 "Prekladové požiadavky so zvýšenou ochranou súkromia (odporúčané)">
+<!ENTITY options.016 "Používa HTTPS a chránené požiadavky XPCOM pre Google, Bing a DeepL vrátane získania tokenu Google. Neposiela cookies ani uložené prihlasovacie údaje a odstraňuje Referer. Ak ochranu nemožno použiť, požiadavka sa zablokuje. Chráni súkromie, ale nezaručuje anonymitu.">
+<!ENTITY options.017 "Vybraná služba stále dostáva text a vašu sieťovú IP adresu (alebo IP VPN/proxy). Nie je zaručené odstránenie všetkých sieťových identifikátorov ani hlavičky Origin. Overované HTTP proxy môžu vyžadovať vypnutie tejto možnosti.">
+<!ENTITY options.018 "Pravidlá automatického prekladu">
+<!ENTITY options.019 "Povoliť automatický preklad zodpovedajúcich webov alebo jazykov">
+<!ENTITY options.020 "Pravidlá platia pri otvorení stránky alebo prepnutí karty. Ručný preklad je vždy dostupný.">
+<!ENTITY options.021 "Vždy prekladať tieto weby (jedna doména na riadok)">
+<!ENTITY options.022 "Nikdy automaticky neprekladať tieto weby (má prednosť)">
+<!ENTITY options.023 "Vždy prekladať tieto jazyky stránok (kódy, napr. en, de, sk)">
+<!ENTITY options.024 "Nikdy automaticky neprekladať tieto jazyky stránok (napr. en, de)">
+<!ENTITY options.025 "Pravidlá domén platia aj pre subdomény. Jazykové pravidlá vyžadujú jazyk uvedený na stránke (html lang alebo metadáta). Výnimky majú prednosť. Ručný preklad zostáva dostupný.">
+<!ENTITY options.026 "Miestna vyrovnávacia pamäť prekladov">
+<!ENTITY options.027 "Ukladať preklady do profilu Pale Moonu (voliteľné)">
+<!ENTITY options.028 "Môže ukladať text navštívených webov vrátane osobných údajov. Predvolene vypnuté a nepoužíva sa v súkromných oknách. Vypnutie neodstráni uložené záznamy.">
+<!ENTITY options.029 "Vymazať uložené preklady">
+<!ENTITY options.030 "Záloha a obnova">
+<!ENTITY options.031 "Exportuje uložené nastavenia, jazyky, pravidlá webov a skratky do súboru JSON. Nezahŕňa vyrovnávaciu pamäť ani umiestnenie tlačidla. Pred exportom uložte rozpracované zmeny.">
+<!ENTITY options.032 "Zahrnúť API kľúč do zálohy (citlivý údaj; predvolene vypnuté)">
+<!ENTITY options.033 "Exportovať nastavenia…">
+<!ENTITY options.034 "Importovať nastavenia…">
+<!ENTITY options.035 "Klávesové skratky">
+<!ENTITY options.036 "Povoliť klávesové skratky TWP">
+<!ENTITY options.037 "Preložiť / obnoviť stránku">
+<!ENTITY options.038 "Kliknite a stlačte kombináciu; Esc zruší, Delete vymaže">
+<!ENTITY options.039 "Vymazať">
+<!ENTITY options.040 "Predvolené">
+<!ENTITY options.041 "Preložiť výber">
+<!ENTITY options.042 "Kliknite a stlačte kombináciu; Esc zruší, Delete vymaže">
+<!ENTITY options.043 "Vymazať">
+<!ENTITY options.044 "Predvolené">
+<!ENTITY options.045 "Obnoviť originál">
+<!ENTITY options.046 "Kliknite a stlačte kombináciu; Esc zruší, Delete vymaže">
+<!ENTITY options.047 "Vymazať">
+<!ENTITY options.048 "Predvolené">
+<!ENTITY options.049 "Kliknite do poľa skratky a stlačte kombináciu. Esc zruší zadávanie; Delete alebo Vymazať skratku vypne. Predvolené obnoví pôvodnú kombináciu. Zmeny uložte tlačidlom Uložiť nastavenia.">
+<!ENTITY options.050 "Systémové skratky a skratky prehliadača môžu mať prednosť (napr. KDE Ctrl+Alt+T). Tieto konflikty nemožno rozpoznať automaticky.">
+<!ENTITY options.051 "Preklad stránky">
+<!ENTITY options.052 "Prekladať dynamicky načítaný obsah">
+<!ENTITY options.053 "Prekladať popisy a atribúty HTML (alt, title, placeholder, aria-label)">
+<!ENTITY options.054 "Prekladať prístupné rámce rovnakého pôvodu (iframe)">
+<!ENTITY options.055 "Zoskupovať text podľa odsekov (jadro TWP)">
+<!ENTITY options.056 "Zobrazovať priebeh prekladu na stránke">
+<!ENTITY options.057 "Predvolene vypnuté. Priebeh zostáva viditeľný v paneli tlačidla; dôležité chyby sa vždy zobrazujú na stránke.">
+<!ENTITY options.058 "Po preklade zobrazovať pôvodný text pri prejdení myšou">
+<!ENTITY options.059 "Originál sa zobrazí v malej bubline bez zmeny preloženej stránky. Dostupné aj v paneli tlačidla.">
+<!ENTITY options.060 "Súbežné požiadavky (1–6)">
+<!ENTITY options.061 "Skupín na požiadavku (1–20)">
+<!ENTITY options.062 "Limit textových uzlov (0 = neobmedzene)">
+<!ENTITY options.063 "DeepL je experimentálny a môže vyžadovať budúce úpravy protokolu. Yandex zatiaľ nie je implementovaný.">
+<!ENTITY options.064 "Zrušiť">
+<!ENTITY options.065 "Uložiť nastavenia">
+<!ENTITY browser.001 "Preklad webových stránok">
+<!ENTITY browser.002 "Originál">
+<!ENTITY browser.003 "Originál">
+<!ENTITY browser.004 "Preložiť stránku">
+<!ENTITY browser.005 "Zrušiť">
+<!ENTITY browser.006 "Jazyky prekladu">
+<!ENTITY browser.007 "⇄">
+<!ENTITY browser.008 "Vymeniť jazyky">
+<!ENTITY browser.009 "Prekladová služba">
+<!ENTITY browser.010 "Google Translate">
+<!ENTITY browser.011 "Bing Translator">
+<!ENTITY browser.012 "DeepL (experimentálny)">
+<!ENTITY browser.013 "Aktuálny web">
+<!ENTITY browser.014 "Vždy prekladať tento web">
+<!ENTITY browser.015 "Nikdy automaticky neprekladať tento web">
+<!ENTITY browser.016 "Vždy prekladať tento jazyk">
+<!ENTITY browser.017 "Nikdy automaticky neprekladať tento jazyk">
+<!ENTITY browser.018 "Zobraziť originál pri prejdení myšou">
+<!ENTITY browser.019 "Preložiť výber…">
+<!ENTITY browser.020 "Nastavenia…">
+<!ENTITY browser.021 "Vyberte jazyk a preložte túto stránku.">
+<!ENTITY browser.022 "TWP for Pale Moon">
+<!ENTITY browser.023 "TWP for Pale Moon – ľavé kliknutie: panel prekladu; Ctrl+klik: preložiť stránku; pravé kliknutie: ponuka">
+<!ENTITY selection.001 "TWP – Preklad označeného textu">
+<!ENTITY selection.002 "TWP – Preklad označeného textu">
+<!ENTITY selection.003 "Z">
+<!ENTITY selection.004 "Vymeniť">
+<!ENTITY selection.005 "Vymeniť jazyky prekladu">
+<!ENTITY selection.006 "Do">
+<!ENTITY selection.007 "Preložiť">
+<!ENTITY selection.008 "Služba">
+<!ENTITY selection.009 "Google Translate">
+<!ENTITY selection.010 "Bing Translator">
+<!ENTITY selection.011 "DeepL (experimentálny, neoficiálny)">
+<!ENTITY selection.012 "Pôvodný text">
+<!ENTITY selection.013 "Preklad">
+<!ENTITY selection.014 "Prekladá sa…">
+<!ENTITY selection.015 "Kopírovať preklad">
+<!ENTITY selection.016 "Zavrieť">
+<!ENTITY options.066 "Obľúbené cieľové jazyky">
+<!ENTITY options.067 "Voliteľne vyberte najviac tri rôzne cieľové jazyky. V prekladovom paneli medzi nimi môžete rýchlo prepínať. Nepodporované jazyky sa skryjú.">
+<!ENTITY browser.024 "Obľúbené cieľové jazyky">
+<!ENTITY options.068 "Vlastný slovník">
+<!ENTITY options.069 "Jedno pravidlo na riadok: pôvodný výraz =&gt; náhrada. Prázdna náhrada ponechá pôvodný výraz. Rozlišujú sa veľké a malé písmená.">
+<!ENTITY options.070 "Platí pre preklad stránky aj výberu. Okolitý text sa prekladá samostatne; výrazy slovníka sa službe neodosielajú. Najviac 100 pravidiel.">

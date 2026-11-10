@@ -10,7 +10,8 @@ assert.match(read('uxp/defaults/preferences/defaults.js'),
   /pref\("extensions\.twpuxp\.showPageProgress", false\)/,
   'On-page progress must be off by default');
 assert.match(read('uxp/chrome/content/options.xul'),
-  /id="twpuxp-option-progress" label="Show on-page translation progress notices"/);
+  /id="twpuxp-option-progress" label="&options\.056;"/);
+assert.match(read('uxp/chrome/locale/en-US/twp.dtd'),/Show on-page translation progress notices/);
 assert.match(read('uxp/chrome/content/options.js'),
   /setBoolPref\(PREFIX \+ "showPageProgress", progressEnabled\)/);
 const nodes=new Map(), popupMessages=[], prefs=new Map();

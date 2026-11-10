@@ -8,6 +8,7 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
+from xul_locale import parse_localized_xul_text
 
 root = pathlib.Path(__file__).resolve().parents[1]
 xml_ns = {'em': 'http://www.mozilla.org/2004/em-rdf#'}
@@ -24,6 +25,9 @@ with tempfile.TemporaryDirectory(prefix='twp-a31-package-') as tmp:
         entries = set(names)
         assert len(names) == len(entries), 'Duplicate XPI entry'
         assert 'LICENSE' in entries and 'README.txt' in entries and 'CREDITS.txt' in entries
+        for locale in ('en-US', 'cs-CZ'):
+            for resource in ('twp.dtd','twp.properties'):
+                assert 'chrome/locale/'+locale+'/'+resource in entries
         for required in ('install.rdf', 'chrome.manifest',
                          'chrome/content/browserOverlay.xul',
                          'chrome/content/browser.js',
@@ -52,7 +56,8 @@ with tempfile.TemporaryDirectory(prefix='twp-a31-package-') as tmp:
         for file in ('chrome/content/browserOverlay.xul',
                      'chrome/content/options.xul',
                      'chrome/content/selectionResult.xul'):
-            ET.fromstring(z.read(file))
+            parse_localized_xul_text(z.read(file).decode('utf-8'),
+                z.read('chrome/locale/en-US/twp.dtd').decode('utf-8'))
         resource_re = re.compile(r'chrome://twpuxp/(content|skin)/([\w.\-/]+)')
         num_references = 0
         for name in sorted(entries):
@@ -73,7 +78,8 @@ with tempfile.TemporaryDirectory(prefix='twp-a31-package-') as tmp:
         about = z.read('chrome/content/browserChrome.js').decode('utf-8')
         assert 'Unofficial native UXP port' in about and 'XUL/UXP' not in about
         options = z.read('chrome/content/options.xul').decode('utf-8')
-        assert 'Native UXP translation preferences' in options
+        assert '&options.003;' in options
+        assert 'Native UXP translation preferences' in z.read('chrome/locale/en-US/twp.dtd').decode('utf-8')
         # Confirm the artwork really is the requested icon size (IHDR, not just PNG signature).
         for size in (16, 24, 32, 48, 64, 128):
             image = z.read(f'chrome/skin/icon-{size}.png')

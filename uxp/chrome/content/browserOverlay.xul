@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE overlay SYSTEM "chrome://twpuxp/locale/twp.dtd">
 <?xml-stylesheet href="chrome://twpuxp/skin/toolbarButton.css" type="text/css"?>
 <?xml-stylesheet href="chrome://twpuxp/skin/mainPopup.css" type="text/css"?>
 <overlay id="twpuxp-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/javascript" src="chrome://twpuxp/content/l10n.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/privacyXHR.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/googleProvider.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/bingProvider.js"/>
@@ -11,10 +13,12 @@
   <script type="application/javascript" src="chrome://twpuxp/content/pageAttributes.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/languageDetector.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/textLayout.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/customDictionary.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/dynamicObserver.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/languageCatalog.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/autoRules.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/languageMenus.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/favoriteLanguages.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/mainPopup.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/originalHover.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/persistentCache.js"/>
@@ -41,61 +45,72 @@
         <hbox align="center">
           <image src="chrome://twpuxp/skin/icon-32.png" width="32" height="32"/>
           <vbox flex="1">
-            <label class="twpuxp-popup-heading" value="Translate Web Pages"/>
-            <label id="twpuxp-popup-state" crop="end" class="twpuxp-popup-muted" value="Original"/>
+            <label class="twpuxp-popup-heading" value="&browser.001;"/>
+            <label id="twpuxp-popup-state" crop="end" class="twpuxp-popup-muted" value="&browser.002;"/>
           </vbox>
         </hbox>
         <hbox align="center" class="twpuxp-popup-actions">
-          <button id="twpuxp-popup-original" flex="1" label="Original"
+          <button id="twpuxp-popup-original" flex="1" label="&browser.003;"
                   oncommand="TWPUXPPopup.restore();"/>
-          <button id="twpuxp-popup-translate" flex="1" label="Translate page"
+          <button id="twpuxp-popup-translate" flex="1" label="&browser.004;"
                   oncommand="TWPUXPPopup.translate();"/>
-          <button id="twpuxp-popup-cancel" label="Cancel"
+          <button id="twpuxp-popup-cancel" label="&browser.005;"
                   oncommand="TWPUXPPopup.cancel();"/>
         </hbox>
         <separator class="twpuxp-popup-section"/>
-        <label value="Translation languages"/>
+        <label value="&browser.006;"/>
         <hbox align="center">
           <menulist id="twpuxp-popup-from" flex="1" crop="end" oncommand="TWPUXPPopup.languagesChanged();"><menupopup/></menulist>
-          <button label="⇄" tooltiptext="Swap languages" oncommand="TWPUXPPopup.swap();"/>
+          <button label="&browser.007;" tooltiptext="&browser.008;" oncommand="TWPUXPPopup.swap();"/>
           <menulist id="twpuxp-popup-to" flex="1" crop="end" oncommand="TWPUXPPopup.languagesChanged();"><menupopup/></menulist>
         </hbox>
-        <label value="Translation service" class="twpuxp-popup-section"/>
+        <vbox id="twpuxp-popup-favorites" hidden="true" class="twpuxp-popup-section">
+          <label value="&browser.024;" class="twpuxp-popup-muted"/>
+          <hbox align="center" id="twpuxp-popup-favorites-row">
+            <button id="twpuxp-popup-favorite1" flex="1" crop="end" hidden="true"
+                    oncommand="TWPUXPPopup.chooseFavorite(1);"/>
+            <button id="twpuxp-popup-favorite2" flex="1" crop="end" hidden="true"
+                    oncommand="TWPUXPPopup.chooseFavorite(2);"/>
+            <button id="twpuxp-popup-favorite3" flex="1" crop="end" hidden="true"
+                    oncommand="TWPUXPPopup.chooseFavorite(3);"/>
+          </hbox>
+        </vbox>
+        <label value="&browser.009;" class="twpuxp-popup-section"/>
         <menulist id="twpuxp-popup-service" oncommand="TWPUXPPopup.serviceChanged();">
           <menupopup>
-            <menuitem value="google" label="Google Translate"/>
-            <menuitem value="bing" label="Bing Translator"/>
-            <menuitem value="deepl" label="DeepL (experimental)"/>
+            <menuitem value="google" label="&browser.010;"/>
+            <menuitem value="bing" label="&browser.011;"/>
+            <menuitem value="deepl" label="&browser.012;"/>
           </menupopup>
         </menulist>
         <separator class="twpuxp-popup-section"/>
-        <label id="twpuxp-popup-site" crop="end" class="twpuxp-popup-muted" value="Current website"/>
-        <checkbox id="twpuxp-popup-always" crop="end" label="Always translate this site"
+        <label id="twpuxp-popup-site" crop="end" class="twpuxp-popup-muted" value="&browser.013;"/>
+        <checkbox id="twpuxp-popup-always" crop="end" label="&browser.014;"
                   oncommand="TWPUXPPopup.siteChanged('always');"/>
-        <checkbox id="twpuxp-popup-never" crop="end" label="Never auto-translate this site"
+        <checkbox id="twpuxp-popup-never" crop="end" label="&browser.015;"
                   oncommand="TWPUXPPopup.siteChanged('never');"/>
-        <checkbox id="twpuxp-popup-language" crop="end" label="Always translate this language"
+        <checkbox id="twpuxp-popup-language" crop="end" label="&browser.016;"
                   oncommand="TWPUXPPopup.languageRuleChanged('always');"/>
-        <checkbox id="twpuxp-popup-neverlanguage" crop="end" label="Never auto-translate this language"
+        <checkbox id="twpuxp-popup-neverlanguage" crop="end" label="&browser.017;"
                   oncommand="TWPUXPPopup.languageRuleChanged('never');"/>
-        <checkbox id="twpuxp-popup-hover" crop="end" label="Show original text on hover"
+        <checkbox id="twpuxp-popup-hover" crop="end" label="&browser.018;"
                   oncommand="TWPUXPPopup.hoverChanged();"/>
         <separator class="twpuxp-popup-section"/>
         <hbox align="center">
-          <button id="twpuxp-popup-selection" label="Translate selection…"
+          <button id="twpuxp-popup-selection" label="&browser.019;"
                   oncommand="TWPUXPPopup.selection();"/>
           <spacer flex="1"/>
-          <button label="Preferences…" oncommand="TWPUXPPopup.options();"/>
+          <button label="&browser.020;" oncommand="TWPUXPPopup.options();"/>
         </hbox>
-        <description id="twpuxp-popup-notice" crop="end" class="twpuxp-popup-muted" value="Select a language and translate this page."/>
+        <description id="twpuxp-popup-notice" crop="end" class="twpuxp-popup-muted" value="&browser.021;"/>
       </vbox>
     </panel>
   </popupset>
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="twpuxp-page-button"
                    class="toolbarbutton-1 chromeclass-toolbar-additional"
-                   label="TWP for Pale Moon"
-                   tooltiptext="TWP for Pale Moon – left click: translation panel; Ctrl+click: translate page; right click: menu"
+                   label="&browser.022;"
+                   tooltiptext="&browser.023;"
                    oncommand="TWPUXP.onToolbarCommand(event);"
                    oncontextmenu="return TWPUXP.onToolbarContext(event);"/>
   </toolbarpalette>

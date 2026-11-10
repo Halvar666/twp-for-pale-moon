@@ -1,0 +1,111 @@
+<!-- TWP for Pale Moon: UI strings, MPL-2.0 -->
+<!ENTITY options.001 "TWP for Pale Moon – Preferences">
+<!ENTITY options.002 "TWP for Pale Moon">
+<!ENTITY options.003 "Native UXP translation preferences">
+<!ENTITY options.004 "Default translation languages">
+<!ENTITY options.005 "Source language">
+<!ENTITY options.006 "Target language">
+<!ENTITY options.007 "Swap languages">
+<!ENTITY options.008 "The toolbar button translates the current page using these languages.">
+<!ENTITY options.009 "Translation service">
+<!ENTITY options.010 "Google Translate (default)">
+<!ENTITY options.011 "Bing Translator">
+<!ENTITY options.012 "DeepL (experimental, unofficial)">
+<!ENTITY options.013 "Service applies to pages and selected text. All three services use unofficial endpoints; DeepL one-shot availability can change.">
+<!ENTITY options.014 "Privacy and network requests">
+<!ENTITY options.015 "Privacy-enhanced translation requests (recommended)">
+<!ENTITY options.016 "Uses HTTPS and protected XPCOM requests for Google, Bing and DeepL, including Google&#x27;s token lookup. Suppresses browser cookies and stored login credentials and clears the channel referrer. If protection cannot be applied, the request is blocked rather than sent unprotected. This is privacy protection, not anonymity.">
+<!ENTITY options.017 "The selected service still receives the text and your network IP address (or VPN/proxy IP). This does not guarantee removal of every network fingerprint or Origin header. Authenticated HTTP proxies may require this option to be switched off.">
+<!ENTITY options.018 "Automatic translation rules">
+<!ENTITY options.019 "Enable automatic translation on matching sites or languages">
+<!ENTITY options.020 "Rules apply when a web page opens or you switch tabs. Manual translation is always available.">
+<!ENTITY options.021 "Always translate these sites (one hostname per line)">
+<!ENTITY options.022 "Never auto-translate these sites (takes precedence)">
+<!ENTITY options.023 "Always translate these page languages (codes, e.g. en, de, sk)">
+<!ENTITY options.024 "Never auto-translate these page languages (codes, e.g. en, de)">
+<!ENTITY options.025 "Domain rules match the site and subdomains. Language rules need a declared page language (html lang or metadata). Site and language exclusions take precedence over all automatic rules. Manual translation is never blocked.">
+<!ENTITY options.026 "Local translation cache">
+<!ENTITY options.027 "Store translations in my Pale Moon profile (optional)">
+<!ENTITY options.028 "May store text from visited websites, including personal content. Disabled by default; never used in private windows. Turning this option off does not delete existing entries.">
+<!ENTITY options.029 "Clear stored translations">
+<!ENTITY options.030 "Backup and restore">
+<!ENTITY options.031 "Export saved preferences, languages, site rules and shortcuts to a JSON file. Translation cache and toolbar placement are not included. Save any unsaved changes before exporting.">
+<!ENTITY options.032 "Include API key in exported backup (sensitive; off by default)">
+<!ENTITY options.033 "Export settings...">
+<!ENTITY options.034 "Import settings...">
+<!ENTITY options.035 "Keyboard shortcuts">
+<!ENTITY options.036 "Enable TWP keyboard shortcuts">
+<!ENTITY options.037 "Translate / restore page">
+<!ENTITY options.038 "Click and press a key combination; Esc cancels, Delete clears">
+<!ENTITY options.039 "Clear">
+<!ENTITY options.040 "Default">
+<!ENTITY options.041 "Translate selection">
+<!ENTITY options.042 "Click and press a key combination; Esc cancels, Delete clears">
+<!ENTITY options.043 "Clear">
+<!ENTITY options.044 "Default">
+<!ENTITY options.045 "Restore original">
+<!ENTITY options.046 "Click and press a key combination; Esc cancels, Delete clears">
+<!ENTITY options.047 "Clear">
+<!ENTITY options.048 "Default">
+<!ENTITY options.049 "Click a shortcut field and press your combination. Esc cancels recording; Delete or Clear disables that action. Use Default to restore its original binding. Save changes with OK.">
+<!ENTITY options.050 "System and browser shortcuts may take precedence (for example, KDE Ctrl+Alt+T). These conflicts cannot be detected automatically.">
+<!ENTITY options.051 "Page translation">
+<!ENTITY options.052 "Translate dynamically loaded content">
+<!ENTITY options.053 "Translate HTML labels and attributes (alt, title, placeholder, aria-label)">
+<!ENTITY options.054 "Translate accessible same-origin frames (iframe)">
+<!ENTITY options.055 "Group text by paragraph (TWP engine)">
+<!ENTITY options.056 "Show on-page translation progress notices">
+<!ENTITY options.057 "Off by default. Translation progress remains available in the toolbar popup; important errors are always shown on the page.">
+<!ENTITY options.058 "Show original text on hover after translation">
+<!ENTITY options.059 "Original text appears in a small tooltip without altering the translated page. Also available in the toolbar popup.">
+<!ENTITY options.060 "Parallel requests (1–6)">
+<!ENTITY options.061 "Groups per request (1–20)">
+<!ENTITY options.062 "Text node limit (0 = unlimited)">
+<!ENTITY options.063 "DeepL is experimental and may require future protocol updates. Yandex is not implemented yet.">
+<!ENTITY options.064 "Cancel">
+<!ENTITY options.065 "Save preferences">
+<!ENTITY browser.001 "Translate Web Pages">
+<!ENTITY browser.002 "Original">
+<!ENTITY browser.003 "Original">
+<!ENTITY browser.004 "Translate page">
+<!ENTITY browser.005 "Cancel">
+<!ENTITY browser.006 "Translation languages">
+<!ENTITY browser.007 "⇄">
+<!ENTITY browser.008 "Swap languages">
+<!ENTITY browser.009 "Translation service">
+<!ENTITY browser.010 "Google Translate">
+<!ENTITY browser.011 "Bing Translator">
+<!ENTITY browser.012 "DeepL (experimental)">
+<!ENTITY browser.013 "Current website">
+<!ENTITY browser.014 "Always translate this site">
+<!ENTITY browser.015 "Never auto-translate this site">
+<!ENTITY browser.016 "Always translate this language">
+<!ENTITY browser.017 "Never auto-translate this language">
+<!ENTITY browser.018 "Show original text on hover">
+<!ENTITY browser.019 "Translate selection…">
+<!ENTITY browser.020 "Preferences…">
+<!ENTITY browser.021 "Select a language and translate this page.">
+<!ENTITY browser.022 "TWP for Pale Moon">
+<!ENTITY browser.023 "TWP for Pale Moon – left click: translation panel; Ctrl+click: translate page; right click: menu">
+<!ENTITY selection.001 "TWP – Translate selected text">
+<!ENTITY selection.002 "TWP – Translate selected text">
+<!ENTITY selection.003 "From">
+<!ENTITY selection.004 "Swap">
+<!ENTITY selection.005 "Swap translation languages">
+<!ENTITY selection.006 "To">
+<!ENTITY selection.007 "Translate">
+<!ENTITY selection.008 "Service">
+<!ENTITY selection.009 "Google Translate">
+<!ENTITY selection.010 "Bing Translator">
+<!ENTITY selection.011 "DeepL (experimental, unofficial)">
+<!ENTITY selection.012 "Original text">
+<!ENTITY selection.013 "Translation">
+<!ENTITY selection.014 "Translating…">
+<!ENTITY selection.015 "Copy translation">
+<!ENTITY selection.016 "Close">
+<!ENTITY options.066 "Favorite target languages">
+<!ENTITY options.067 "Optional: select up to three different target languages. Use the shortcuts in the translation popup to switch quickly. Unsupported languages are hidden for the current service.">
+<!ENTITY browser.024 "Favorite target languages">
+<!ENTITY options.068 "Custom dictionary">
+<!ENTITY options.069 "One rule per line: source =&gt; replacement. Leave the replacement empty to keep the original term. Matching is case-sensitive.">
+<!ENTITY options.070 "Rules apply to page and selected-text translation; surrounding text is translated separately. Terms are not sent to the provider. Up to 100 rules.">

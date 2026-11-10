@@ -1,131 +1,166 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://twpuxp/locale/twp.dtd">
 <?xml-stylesheet href="chrome://twpuxp/skin/options.css" type="text/css"?>
 <window id="twpuxp-options-window"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        title="TWP for Pale Moon – Preferences"
+        title="&options.001;"
         width="610" height="690" minwidth="480" minheight="400" orient="vertical"
         onload="TWPOptions.init();" onunload="TWPUXPCache.close();">
+  <script type="application/javascript" src="chrome://twpuxp/content/l10n.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/languageCatalog.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/languageMenus.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/favoriteLanguages.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/autoRules.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/persistentCache.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/shortcutBindings.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/customDictionary.js"/>
+  <script type="application/javascript" src="chrome://twpuxp/content/settingsBackup.js"/>
   <script type="application/javascript" src="chrome://twpuxp/content/options.js"/>
   <vbox flex="1" class="twpuxp-options-body">
     <hbox align="center">
       <image src="chrome://twpuxp/skin/icon-32.png" width="32" height="32"/>
       <vbox flex="1">
-        <label value="TWP for Pale Moon" class="header"/>
-        <description>Native UXP translation preferences</description>
+        <label value="&options.002;" class="header"/>
+        <description>&options.003;</description>
       </vbox>
     </hbox>
     <scrollbox orient="vertical" flex="1" class="twpuxp-options-scroll">
       <vbox class="twpuxp-options-fields">
     <groupbox>
-      <caption label="Default translation languages"/>
+      <caption label="&options.004;"/>
       <grid flex="1"><columns><column/><column flex="1"/></columns><rows>
-        <row align="center"><label value="Source language" control="twpuxp-option-from"/>
+        <row align="center"><label value="&options.005;" control="twpuxp-option-from"/>
           <menulist id="twpuxp-option-from" flex="1"><menupopup/></menulist></row>
-        <row align="center"><label value="Target language" control="twpuxp-option-to"/>
+        <row align="center"><label value="&options.006;" control="twpuxp-option-to"/>
           <menulist id="twpuxp-option-to" flex="1"><menupopup/></menulist></row>
       </rows></grid>
-      <hbox><button label="Swap languages" oncommand="TWPOptions.swap();"/></hbox>
-      <description class="helptext">The toolbar button translates the current page using these languages.</description>
+      <hbox><button label="&options.007;" oncommand="TWPOptions.swap();"/></hbox>
+      <description class="helptext">&options.008;</description>
     </groupbox>
     <groupbox>
-      <caption label="Translation service"/>
+      <caption label="&options.066;"/>
+      <description class="helptext">&options.067;</description>
+      <grid><columns><column/><column flex="1"/></columns><rows>
+        <row align="center"><label value="1." control="twpuxp-option-favorite1"/>
+          <menulist id="twpuxp-option-favorite1" flex="1"><menupopup/></menulist></row>
+        <row align="center"><label value="2." control="twpuxp-option-favorite2"/>
+          <menulist id="twpuxp-option-favorite2" flex="1"><menupopup/></menulist></row>
+        <row align="center"><label value="3." control="twpuxp-option-favorite3"/>
+          <menulist id="twpuxp-option-favorite3" flex="1"><menupopup/></menulist></row>
+      </rows></grid>
+    </groupbox>
+    <groupbox>
+      <caption label="&options.068;"/>
+      <description class="helptext">&options.069;</description>
+      <textbox id="twpuxp-option-dictionary" multiline="true" rows="5" flex="1"/>
+      <description class="helptext">&options.070;</description>
+    </groupbox>
+    <groupbox>
+      <caption label="&options.009;"/>
+      <hbox align="center" id="twpuxp-service-row">
       <menulist id="twpuxp-option-service" flex="1" oncommand="TWPOptions.serviceChanged();">
         <menupopup>
-          <menuitem value="google" label="Google Translate (default)"/>
-          <menuitem value="bing" label="Bing Translator"/>
-          <menuitem value="deepl" label="DeepL (experimental, unofficial)"/>
+          <menuitem value="google" label="&options.010;"/>
+          <menuitem value="bing" label="&options.011;"/>
+          <menuitem value="deepl" label="&options.012;"/>
         </menupopup>
       </menulist>
-      <description class="helptext">Service applies to pages and selected text. All three services use unofficial endpoints; DeepL one-shot availability can change.</description>
+      </hbox>
+      <description class="helptext">&options.013;</description>
     </groupbox>
     <groupbox>
-      <caption label="Privacy and network requests"/>
-      <checkbox id="twpuxp-option-privacy" label="Privacy-enhanced translation requests (recommended)"/>
-      <description class="helptext">Uses HTTPS and protected XPCOM requests for Google, Bing and DeepL, including Google's token lookup. Suppresses browser cookies and stored login credentials and clears the channel referrer. If protection cannot be applied, the request is blocked rather than sent unprotected. This is privacy protection, not anonymity.</description>
-      <description class="helptext">The selected service still receives the text and your network IP address (or VPN/proxy IP). This does not guarantee removal of every network fingerprint or Origin header. Authenticated HTTP proxies may require this option to be switched off.</description>
+      <caption label="&options.014;"/>
+      <checkbox id="twpuxp-option-privacy" label="&options.015;"/>
+      <description class="helptext">&options.016;</description>
+      <description class="helptext">&options.017;</description>
     </groupbox>
     <groupbox>
-      <caption label="Automatic translation rules"/>
-      <checkbox id="twpuxp-option-autoenabled" label="Enable automatic translation on matching sites or languages"/>
-      <description class="helptext">Rules apply when a web page opens or you switch tabs. Manual translation is always available.</description>
-      <label value="Always translate these sites (one hostname per line)" control="twpuxp-option-autosites"/>
+      <caption label="&options.018;"/>
+      <checkbox id="twpuxp-option-autoenabled" label="&options.019;"/>
+      <description class="helptext">&options.020;</description>
+      <label value="&options.021;" control="twpuxp-option-autosites"/>
       <textbox id="twpuxp-option-autosites" multiline="true" rows="3" flex="1"/>
-      <label value="Never auto-translate these sites (takes precedence)" control="twpuxp-option-neversites"/>
+      <label value="&options.022;" control="twpuxp-option-neversites"/>
       <textbox id="twpuxp-option-neversites" multiline="true" rows="3" flex="1"/>
-      <label value="Always translate these page languages (codes, e.g. en, de, sk)" control="twpuxp-option-autolangs"/>
+      <label value="&options.023;" control="twpuxp-option-autolangs"/>
       <textbox id="twpuxp-option-autolangs" multiline="true" rows="2" flex="1"/>
-      <label value="Never auto-translate these page languages (codes, e.g. en, de)" control="twpuxp-option-neverlangs"/>
+      <label value="&options.024;" control="twpuxp-option-neverlangs"/>
       <textbox id="twpuxp-option-neverlangs" multiline="true" rows="2" flex="1"/>
-      <description class="helptext">Domain rules match the site and subdomains. Language rules need a declared page language (html lang or metadata). Site and language exclusions take precedence over all automatic rules. Manual translation is never blocked.</description>
+      <description class="helptext">&options.025;</description>
     </groupbox>
     <groupbox>
-      <caption label="Local translation cache"/>
-      <checkbox id="twpuxp-option-diskcache" label="Store translations in my Pale Moon profile (optional)"/>
-      <description class="helptext">May store text from visited websites, including personal content. Disabled by default; never used in private windows. Turning this option off does not delete existing entries.</description>
+      <caption label="&options.026;"/>
+      <checkbox id="twpuxp-option-diskcache" label="&options.027;"/>
+      <description class="helptext">&options.028;</description>
       <hbox align="center">
-        <button id="twpuxp-option-cacheclear" label="Clear stored translations" oncommand="TWPOptions.clearCache();"/>
+        <button id="twpuxp-option-cacheclear" label="&options.029;" oncommand="TWPOptions.clearCache();"/>
         <label id="twpuxp-option-cachecount" value=""/>
       </hbox>
     </groupbox>
     <groupbox>
-      <caption label="Keyboard shortcuts"/>
-      <checkbox id="twpuxp-option-shortcuts" label="Enable TWP keyboard shortcuts"/>
-      <grid flex="1"><columns><column/><column flex="1"/><column/><column/></columns><rows>
-        <row align="center"><label value="Translate / restore page" control="twpuxp-shortcut-input-toggle"/>
-          <textbox id="twpuxp-shortcut-input-toggle" readonly="true" flex="1"
-                   tooltiptext="Click and press a key combination; Esc cancels, Delete clears"
-                   onkeydown="TWPOptions.captureShortcut(event, 'toggle');"/>
-          <button label="Clear" oncommand="TWPOptions.clearShortcut('toggle');"/>
-          <button label="Default" oncommand="TWPOptions.resetShortcut('toggle');"/></row>
-        <row align="center"><label value="Translate selection" control="twpuxp-shortcut-input-selection"/>
-          <textbox id="twpuxp-shortcut-input-selection" readonly="true" flex="1"
-                   tooltiptext="Click and press a key combination; Esc cancels, Delete clears"
-                   onkeydown="TWPOptions.captureShortcut(event, 'selection');"/>
-          <button label="Clear" oncommand="TWPOptions.clearShortcut('selection');"/>
-          <button label="Default" oncommand="TWPOptions.resetShortcut('selection');"/></row>
-        <row align="center"><label value="Restore original" control="twpuxp-shortcut-input-restore"/>
-          <textbox id="twpuxp-shortcut-input-restore" readonly="true" flex="1"
-                   tooltiptext="Click and press a key combination; Esc cancels, Delete clears"
-                   onkeydown="TWPOptions.captureShortcut(event, 'restore');"/>
-          <button label="Clear" oncommand="TWPOptions.clearShortcut('restore');"/>
-          <button label="Default" oncommand="TWPOptions.resetShortcut('restore');"/></row>
-      </rows></grid>
-      <description id="twpuxp-shortcut-error" class="error" value=""/>
-      <description class="helptext">Click a shortcut field and press your combination. Esc cancels recording; Delete or Clear disables that action. Use Default to restore its original binding. Save changes with OK.</description>
-      <description class="helptext">System and browser shortcuts may take precedence (for example, KDE Ctrl+Alt+T). These conflicts cannot be detected automatically.</description>
+      <caption label="&options.030;"/>
+      <description class="helptext">&options.031;</description>
+      <checkbox id="twpuxp-option-backupkey" label="&options.032;"/>
+      <hbox align="center">
+        <button id="twpuxp-option-export" label="&options.033;" oncommand="TWPOptions.exportSettings();"/>
+        <button id="twpuxp-option-import" label="&options.034;" oncommand="TWPOptions.importSettings();"/>
+      </hbox>
+      <description id="twpuxp-option-backupstatus" class="helptext" value=""/>
     </groupbox>
     <groupbox>
-      <caption label="Page translation"/>
-      <checkbox id="twpuxp-option-dynamic" label="Translate dynamically loaded content"/>
-      <checkbox id="twpuxp-option-attributes" label="Translate HTML labels and attributes (alt, title, placeholder, aria-label)"/>
-      <checkbox id="twpuxp-option-iframes" label="Translate accessible same-origin frames (iframe)"/>
-      <checkbox id="twpuxp-option-grouped" label="Group text by paragraph (TWP engine)"/>
-      <checkbox id="twpuxp-option-progress" label="Show on-page translation progress notices"/>
-      <description class="helptext">Off by default. Translation progress remains available in the toolbar popup; important errors are always shown on the page.</description>
-      <checkbox id="twpuxp-option-hover" label="Show original text on hover after translation"/>
-      <description class="helptext">Original text appears in a small tooltip without altering the translated page. Also available in the toolbar popup.</description>
+      <caption label="&options.035;"/>
+      <checkbox id="twpuxp-option-shortcuts" label="&options.036;"/>
+      <grid flex="1"><columns><column/><column flex="1"/><column/><column/></columns><rows>
+        <row align="center"><label value="&options.037;" control="twpuxp-shortcut-input-toggle"/>
+          <textbox id="twpuxp-shortcut-input-toggle" readonly="true" flex="1"
+                   tooltiptext="&options.038;"
+                   onkeydown="TWPOptions.captureShortcut(event, 'toggle');"/>
+          <button label="&options.039;" oncommand="TWPOptions.clearShortcut('toggle');"/>
+          <button label="&options.040;" oncommand="TWPOptions.resetShortcut('toggle');"/></row>
+        <row align="center"><label value="&options.041;" control="twpuxp-shortcut-input-selection"/>
+          <textbox id="twpuxp-shortcut-input-selection" readonly="true" flex="1"
+                   tooltiptext="&options.042;"
+                   onkeydown="TWPOptions.captureShortcut(event, 'selection');"/>
+          <button label="&options.043;" oncommand="TWPOptions.clearShortcut('selection');"/>
+          <button label="&options.044;" oncommand="TWPOptions.resetShortcut('selection');"/></row>
+        <row align="center"><label value="&options.045;" control="twpuxp-shortcut-input-restore"/>
+          <textbox id="twpuxp-shortcut-input-restore" readonly="true" flex="1"
+                   tooltiptext="&options.046;"
+                   onkeydown="TWPOptions.captureShortcut(event, 'restore');"/>
+          <button label="&options.047;" oncommand="TWPOptions.clearShortcut('restore');"/>
+          <button label="&options.048;" oncommand="TWPOptions.resetShortcut('restore');"/></row>
+      </rows></grid>
+      <description id="twpuxp-shortcut-error" class="error" value=""/>
+      <description class="helptext">&options.049;</description>
+      <description class="helptext">&options.050;</description>
+    </groupbox>
+    <groupbox>
+      <caption label="&options.051;"/>
+      <checkbox id="twpuxp-option-dynamic" label="&options.052;"/>
+      <checkbox id="twpuxp-option-attributes" label="&options.053;"/>
+      <checkbox id="twpuxp-option-iframes" label="&options.054;"/>
+      <checkbox id="twpuxp-option-grouped" label="&options.055;"/>
+      <checkbox id="twpuxp-option-progress" label="&options.056;"/>
+      <description class="helptext">&options.057;</description>
+      <checkbox id="twpuxp-option-hover" label="&options.058;"/>
+      <description class="helptext">&options.059;</description>
       <grid><columns><column/><column flex="1"/></columns><rows>
-        <row align="center"><label value="Parallel requests (1–6)" control="twpuxp-option-concurrency"/>
+        <row align="center"><label value="&options.060;" control="twpuxp-option-concurrency"/>
           <textbox id="twpuxp-option-concurrency" size="6"/></row>
-        <row align="center"><label value="Groups per request (1–20)" control="twpuxp-option-batch"/>
+        <row align="center"><label value="&options.061;" control="twpuxp-option-batch"/>
           <textbox id="twpuxp-option-batch" size="6"/></row>
-        <row align="center"><label value="Text node limit (0 = unlimited)" control="twpuxp-option-maxnodes"/>
+        <row align="center"><label value="&options.062;" control="twpuxp-option-maxnodes"/>
           <textbox id="twpuxp-option-maxnodes" size="8"/></row>
       </rows></grid>
-      <description class="helptext">DeepL is experimental and may require future protocol updates. Yandex is not implemented yet.</description>
+      <description class="helptext">&options.063;</description>
     </groupbox>
       </vbox>
     </scrollbox>
     <description id="twpuxp-options-error" class="error"/>
     <hbox align="center" pack="end" class="twpuxp-options-footer">
-      <button label="Cancel" oncommand="window.close();"/>
-      <button id="twpuxp-option-save" label="Save preferences" default="true"
+      <button label="&options.064;" oncommand="window.close();"/>
+      <button id="twpuxp-option-save" label="&options.065;" default="true"
               oncommand="TWPOptions.save();"/>
     </hbox>
   </vbox>

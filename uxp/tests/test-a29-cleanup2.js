@@ -22,5 +22,5 @@ for(const name of integrationFixtures) {
  assert.match(file, /loadLegacyCache/);
 }
 const xmlFixture = read('tools/test-a10-options-layout.py');
-assert.match(xmlFixture, /ET\.parse/);
+assert.match(xmlFixture, /parse_localized_xul/);
 console.log('PASS a29: all tests discovered, real cache loaded in legacy mocks, XML layout included, version updated');

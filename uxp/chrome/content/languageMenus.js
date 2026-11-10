@@ -5,7 +5,15 @@
  */
 var TWPUXPLanguageMenus = (function () {
   "use strict";
+  function L(key, fallback, args) {
+    return typeof TWPUXPL10n !== "undefined" ?
+      TWPUXPL10n.get(key, fallback, args) :
+      (args ? args.reduce(function(s, item, i) {
+        return s.split("{" + i + "}").join(String(item));
+      }, fallback) : fallback);
+  }
   function findPopup(list) {
+
     var popups = list.getElementsByTagName("menupopup");
     if (popups.length) return popups[0];
     var popup = document.createElement("menupopup");
@@ -19,7 +27,7 @@ var TWPUXPLanguageMenus = (function () {
     list.selectedItem = null;
     while (popup.firstChild) popup.removeChild(popup.firstChild);
     var languages = TWPUXPLanguageCatalog.list(service);
-    if (withAuto) languages.unshift(["auto", "Detect automatically"]);
+    if (withAuto) languages.unshift(["auto", L("language.detect", "Detect automatically")]);
     languages.forEach(function (entry) {
       var item = document.createElement("menuitem");
       item.setAttribute("label", entry[1]);

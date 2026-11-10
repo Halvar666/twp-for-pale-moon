@@ -30,6 +30,13 @@
 #twpuxp-popup-body .twpuxp-popup-heading { font-size: 1.15em; font-weight: bold; }
 #twpuxp-popup-body .twpuxp-popup-muted { color: GrayText; }
 #twpuxp-popup-body .twpuxp-popup-section { margin-top: 9px; }
+#twpuxp-popup-favorites-row > button {
+  min-width: 0;
+  max-width: 113px;
+}
+#twpuxp-popup-favorites-row > button.twpuxp-favorite-active {
+  font-weight: bold;
+}
 #twpuxp-popup-body .twpuxp-popup-actions { margin-top: 7px; }
 #twpuxp-popup-body menulist { min-width: 105px; }
 #twpuxp-popup-from, #twpuxp-popup-to { min-width: 120px; width: 145px; max-width: 150px; }

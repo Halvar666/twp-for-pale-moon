@@ -1,3 +1,80 @@
+## 1.0.0b3 — Third public beta
+
+[Added] Versioned JSON settings backup/restore with optional API key handling; local cache excluded.
+
+[Added] Eight native XUL UI languages, up to three favorite target languages, and an optional case-sensitive custom dictionary.
+
+[Improved] HTTP 429 / Retry-After protection and bounded transient-error retries without automatic provider switching.
+
+[Fixed] Defensive XUL service dropdown layout, duplicated locale-script loading.
+
+[Build] Final stabilization: reproducible clean XPI and 58 automated regression checks. No new functional changes after b3a6.
+
+[Compatibility] Pale Moon 33–35 (primary); basic Basilisk 52.9.x support. New Moon and Firefox remain unsupported.
+
+## 1.0.0b3a7 — Clean build and final stabilization (unreleased test build)
+
+- [Stabilization] No new features or changes to translation provider logic, page/selection translation, settings, or UI behavior compared with 1.0.0b3a6.
+- [Build] Reproducible XPI packaging with fixed ZIP entry timestamps and permissions; ignore temporary/editor-generated files during packaging.
+- [Build] Preflight all eight registered locale catalogs and all three localized XUL windows, instead of checking only English and Czech.
+- [Tests] Add repeat-build and runtime-manifest consistency checks. Keep all existing regression suites and both application targets unchanged.
+- [Compatibility] Pale Moon 33–35 remains the primary target; Basilisk 52.9.x retains basic compatibility. New Moon and historical Firefox are not supported.
+- [Privacy] No new network endpoints, permissions, services, cache behavior, or changes to backup data.
+
+## 1.0.0b3a6 — Service resilience (unreleased test build)
+
+- [Improved] Google: honor HTTP 429 `Retry-After` without retrying during the advertised cooldown. Without this header, keep the pre-existing maximum of two short 429 retries; a final 429 starts a one-minute cooldown.
+- [Improved] Bing: recognize HTTP 429, honor `Retry-After` with a one-minute minimum, and classify transient HTTP/network errors for the existing page-level failure handling. No automatic Bing retries.
+- [Improved] DeepL (experimental): do not automatically repeat HTTP 429; preserve the existing cooldown and allow at most one delayed retry (1.25s) for transient 408/5xx/network/timeouts. Invalid payload, HTTP 4xx and privacy-protection errors are never retried.
+- [Improved] Page status: show a localized approximate cooldown after an HTTP 429; stop further batches while keeping already translated text restorable and never switching providers without permission.
+- [Localization] Added `page.serviceLimit` and `page.retryAfter` messages in all eight UI locales; no new permissions or preferences.
+- [Tests] Offline mocked-transport regression tests for 429, Retry-After, transient retries, callback uniqueness, and safe page stopping. Manual checks against live services remain necessary.
+- [Unchanged] Service endpoints, text mapping, persistent cache, settings backup, custom dictionary, add-on ID and declared Pale Moon/Basilisk compatibility.
+
+## 1.0.0b3a5 — Custom dictionary (unreleased test build)
+
+- [Added] Optional, case-sensitive personal translation dictionary: `source => replacement`; an empty replacement keeps the exact original term. Up to 100 entries, with duplicate/length validation.
+- [Added] Dictionary for full-page (grouped and classic) and selected-text translation, with special handling for multiline/preformatted content. Terms match inside individual text nodes; HTML structure and restored originals remain unchanged.
+- [Added] Include dictionary text in the existing v1 JSON settings backup; Unicode-safe ASCII preference storage supports accents on older UXP engines. Existing backups remain importable.
+- [Improved] Keep protected/replaced terms outside translation requests. Batch the remaining fragments conservatively and retain 750ms pacing for experimental DeepL.
+- [Localization] Added dictionary captions/help text to all eight UI languages; translation engines and application compatibility unchanged.
+- [Tests] 55/55 offline suites: validation, Unicode, fragment batching, protected-term omission, settings round-trip, provider integration with mocked Google HTTP 502 and original-page restoration.
+- [Limitations] Matching is exact and case-sensitive, and does not span HTML text-node boundaries. Breaking sentences around custom terms can affect grammatical flow. Real-browser/network testing is still required.
+
+## 1.0.0b3a4 — Favorite target languages (unreleased test build)
+
+- [Added] Up to three optional, distinct favorite target languages in Preferences, independent of the selected translation provider.
+- [Added] Contextual shortcut buttons in the main popup; select a favorite to set the target language for the next translation. The buttons remain hidden when no favorites are configured.
+- [Added] Provider-aware filtering: unsupported favorites are hidden in the popup, but the stored favorites are preserved when the service changes.
+- [Added] Export/import of favorite targets in the existing JSON settings-backup format (v1), including strict validation and backward-compatible import of older backups.
+- [Fixed] Load `l10n.js` only once per XUL window instead of four times.
+- [Tests] 52/52 automated suites, including favorites/popup behavior, provider filtering, backup round-trip and 8 complete locale catalogs.
+- [Unchanged] Google, Bing and experimental DeepL provider implementations; Pale Moon/Basilisk declarations, previous settings and extension ID.
+
+## 1.0.0b3a3 — Additional UI languages (unreleased test build)
+
+- [Added] Native DTD and `.properties` UI translations for German, French, Spanish, Polish, Slovak and Italian.
+- [Added] Language registration with both short and regional locale codes; existing en-US and Czech locale support retained.
+- [Tests] Added checks for 8 complete language catalogs (104 static and 105 dynamic keys each), XUL entity expansion, JSON/settings safety prompts, replacement placeholders and resource packaging.
+- [Unchanged] Translators, backup/restore JSON schema, addon identity, settings and Basilisk compatibility. No New Moon support is claimed.
+- [Note] Additional translations are initial drafts; native-speaker proofreading and browser layout checks remain welcome.
+
+## 1.0.0b3a2 — English/Czech UI localization (unreleased test build)
+
+- [Added] Native chrome locale resources (`en-US`, `cs`, `cs-CZ`) with XUL DTD entities and `.properties` string bundles.
+- [Added] Localized Preferences, backup/restore prompts, toolbar popup, site/context menus, selection dialog, and page-translation status messages.
+- [Safety] Language codes, provider identifiers, stored preferences, settings JSON format, add-on ID, and translation engines are unchanged. English fallbacks remain available for absent dynamic keys.
+- [Tests] Added native locale tests for matching DTD/properties keys, both localized XUL layouts, and run-time string-bundle substitutions; offline XUL validation now resolves bundled entities without remote DTDs.
+- [Compatibility] Pale Moon remains primary; basic Basilisk support unchanged. New Moon 28 remains unsupported.
+
+## 1.0.0b3a1 — Development test build (unreleased)
+
+- [Added] Versioned JSON export/import of saved preferences, automatic rules, and shortcuts.
+- [Added] Optional API key export (explicit opt-in) and separate confirmation on import.
+- [Fixed] XUL layout: keep the translation-service dropdown in a horizontal container to avoid unintended vertical stretching in older themes (best-effort).
+- [Safety] Reject unknown or malformed backup entries before applying; roll back changes if a preference write fails; exclude SQLite translation cache and toolbar placement.
+- [Compatibility] No change to declared Pale Moon/Basilisk targets; New Moon remains unsupported.
+
 # TWP for Pale Moon — UXP port changelog
 
 ## 1.0.0b2 — Second public beta candidate
